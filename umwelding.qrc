@@ -6,5 +6,6 @@
         <file>images/work.png</file>
         <file>images/about.png</file>
         <file>images/group.png</file>
+        <file>images/curve.png</file>
     </qresource>
 </RCC>

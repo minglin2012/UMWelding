@@ -71,12 +71,15 @@ public:
 
 public:
     GroupPage(QWidget *parent = 0);
-    void addItem(QGridLayout *layout, const QString &title, const QString &unit,int row,int column);
+    GroupPage(bool bEnable, QWidget *parent = 0);
+//    void addItem(QGridLayout *layout, const QString &title, const QString &unit,int row,int column);
+    void addItem(QGridLayout *layout, const QString &title, const QString &unit,int row,int column,int rowSpan=1,int columnSpan=1);
     void addItem(QGridLayout *layout,  const int * pointsY, int row, int column, int rowSpan, int columnSpan);
     bool generateY(EGenAlgorithm algo, double *param, int paramAmount);
     bool generateY(EGenAlgorithm algo, QPoint  *points,int pointAmount, int lagrangeFactor=1);
 private:
     int pointsY[1000];
+    bool m_bEnable;
 };
 
 
@@ -108,6 +111,14 @@ class DebugPage : public QWidget
 {
 public:
     DebugPage(QWidget *parent = 0);
+    void addItem(QGridLayout *layout, const QString &title,int row,int column,int rowSpan=1,int columnSpan=1);
+    void addItem(QGridLayout *layout, const QString &title, const QString &unit,int row,int column);
+};
+
+class CurvePage : public QWidget
+{
+public:
+    CurvePage(QWidget *parent = 0);
 };
 
 class AboutPage : public QWidget

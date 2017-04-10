@@ -40,7 +40,7 @@
 
 #include <QtWidgets>
 
-#include "configdialog.h"
+#include "umwelding.h"
 #include "pages.h"
 
 ConfigDialog::ConfigDialog()
@@ -65,16 +65,17 @@ ConfigDialog::ConfigDialog()
 
     pagesWidget = new QStackedWidget;
     pagesWidget->addWidget(new WorkPage);
-    pagesWidget->addWidget(new GroupPage);
-    pagesWidget->addWidget(new ConfigPage);
+    pagesWidget->addWidget(new GroupPage(false));
+    pagesWidget->addWidget(new GroupPage(true));
+    pagesWidget->addWidget(new CurvePage);
     pagesWidget->addWidget(new DebugPage);
     pagesWidget->addWidget(new AboutPage);
 
     QPushButton *closeButton = new QPushButton(tr("Close"));
     connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
 
-      createIcons();
-     contentsWidget->setCurrentRow(0);
+    createIcons();
+    contentsWidget->setCurrentRow(0);
     contentsWidget->setStyleSheet("background-color:transparent");
 
 
@@ -111,29 +112,10 @@ void ConfigDialog::createIcons()
     addButton(contentsWidget,tr(":/images/work.png"),tr("工作"));
     addButton(contentsWidget,tr(":/images/group.png"),tr("分组"));
     addButton(contentsWidget,tr(":/images/config.png"),tr("设置"));
+    addButton(contentsWidget,tr(":/images/curve.png"),tr("曲线"));
     addButton(contentsWidget,tr(":/images/debug.png"),tr("调试"));
     addButton(contentsWidget,tr(":/images/about.png"),tr("关于"));
-    contentsWidget->adjustSize();
-//    contentsWidget->resize(100,2000);
-
-
-//    QListWidgetItem *configButton = new QListWidgetItem(contentsWidget);
-//    configButton->setIcon(QIcon(":/images/config.png"));
-//    configButton->setText(tr("Configuration"));
-//    configButton->setTextAlignment(Qt::AlignHCenter);
-//    configButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-
-//    QListWidgetItem *updateButton = new QListWidgetItem(contentsWidget);
-//    updateButton->setIcon(QIcon(":/images/update.png"));
-//    updateButton->setText(tr("Update"));
-//    updateButton->setTextAlignment(Qt::AlignHCenter);
-//    updateButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-
-//    QListWidgetItem *queryButton = new QListWidgetItem(contentsWidget);
-//    queryButton->setIcon(QIcon(":/images/query.png"));
-//    queryButton->setText(tr("Query"));
-//    queryButton->setTextAlignment(Qt::AlignHCenter);
-//    queryButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+//    contentsWidget->adjustSize();
 
     connect(contentsWidget,
             SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),

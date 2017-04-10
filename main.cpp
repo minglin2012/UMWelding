@@ -40,11 +40,11 @@
 
 #include <QApplication>
 
-#include "configdialog.h"
+#include "umwelding.h"
 
 int main(int argc, char *argv[])
 {
-    Q_INIT_RESOURCE(configdialog);
+    Q_INIT_RESOURCE(umwelding);
 
 
     QApplication app(argc, argv);
