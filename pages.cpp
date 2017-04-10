@@ -313,9 +313,9 @@ WorkPage::WorkPage(QWidget *parent)
     mainLayout->addWidget(statusGroup);
     QGridLayout *statusLayout = new QGridLayout;
     statusGroup->setLayout(statusLayout);
-    addItem(statusLayout,tr("功  率"),tr("ms"),0,0);
-    addItem(statusLayout,tr("峰  值"),tr("ms"),1,0);
-    addItem(statusLayout,tr("频  率"),tr("%"),2,0);
+    addItem(statusLayout,tr("功  率 "),tr("ms"),0,0);
+    addItem(statusLayout,tr("峰  值 "),tr("ms"),1,0);
+    addItem(statusLayout,tr("频  率 "),tr("%"),2,0);
     addItem(statusLayout,tr("焊接能量"),tr("J"),3,0);
     addItem(statusLayout,tr("焊接时间"),tr(""),4,0);
     addItem(statusLayout,tr("工件计数"),tr("" ),5,0);
