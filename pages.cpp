@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
@@ -45,38 +45,30 @@
 #include <iostream>
 using namespace std;
 
-ConfigPage::ConfigPage(QWidget *parent)
-    : QWidget(parent)
-{
-    QGroupBox *configGroup = new QGroupBox(tr("参数设置"));
-    QGroupBox *curveGroup = new QGroupBox(tr("曲线参数"));
-
-
-}
 
 QueryPage::QueryPage(QWidget *parent)
     : QWidget(parent)
 {
-    QGroupBox *packagesGroup = new QGroupBox(tr("Look for packages"));
+    QGroupBox *packagesGroup = new QGroupBox(QStringLiteral("Look for packages"));
 
-    QLabel *nameLabel = new QLabel(tr("Name:"));
+    QLabel *nameLabel = new QLabel(QStringLiteral("Name:"));
     QLineEdit *nameEdit = new QLineEdit;
 
-    QLabel *dateLabel = new QLabel(tr("Released after:"));
+    QLabel *dateLabel = new QLabel(QStringLiteral("Released after:"));
     QDateTimeEdit *dateEdit = new QDateTimeEdit(QDate::currentDate());
 
-    QCheckBox *releasesCheckBox = new QCheckBox(tr("Releases"));
-    QCheckBox *upgradesCheckBox = new QCheckBox(tr("Upgrades"));
+    QCheckBox *releasesCheckBox = new QCheckBox(QStringLiteral("Releases"));
+    QCheckBox *upgradesCheckBox = new QCheckBox(QStringLiteral("Upgrades"));
 
     QSpinBox *hitsSpinBox = new QSpinBox;
-    hitsSpinBox->setPrefix(tr("Return up to "));
-    hitsSpinBox->setSuffix(tr(" results"));
-    hitsSpinBox->setSpecialValueText(tr("Return only the first result"));
+    hitsSpinBox->setPrefix(QStringLiteral("Return up to "));
+    hitsSpinBox->setSuffix(QStringLiteral(" results"));
+    hitsSpinBox->setSpecialValueText(QStringLiteral("Return only the first result"));
     hitsSpinBox->setMinimum(1);
     hitsSpinBox->setMaximum(100);
     hitsSpinBox->setSingleStep(10);
 
-    QPushButton *startQueryButton = new QPushButton(tr("Start query"));
+    QPushButton *startQueryButton = new QPushButton(QStringLiteral("Start query"));
 
     QGridLayout *packagesLayout = new QGridLayout;
     packagesLayout->addWidget(nameLabel, 0, 0);
@@ -102,30 +94,26 @@ GroupPage::GroupPage(QWidget *parent)
     : QWidget(parent)
 {
 
-    QGroupBox *paramGroup = new QGroupBox(tr("工作参数"));
-    QGroupBox *curveGroup = new QGroupBox(tr("曲线参数"));
+    QGroupBox *paramGroup = new QGroupBox(QStringLiteral("工作参数"));
+    QGroupBox *curveGroup = new QGroupBox(QStringLiteral("曲线参数"));
     QGridLayout *mainLayout = new QGridLayout;
     mainLayout->addWidget(paramGroup,0,0);
     QGridLayout *paramLayout = new QGridLayout;
     paramGroup->setLayout(paramLayout);
-    addItem(paramLayout,tr("下降时间"),tr("ms"),0,0);
-    addItem(paramLayout,tr("上升时间"),tr("ms"),1,0);
-    addItem(paramLayout,tr("震落振幅"),tr("%"),2,0);
-    addItem(paramLayout,tr("焊接能量"),tr("J"),3,0);
-    addItem(paramLayout,tr("初始驱动"),tr(""),4,0);
-    addItem(paramLayout,tr("工作模式"),tr("" ),0,1);
-    addItem(paramLayout,tr("工作组号"),tr("" ),6,1,1,1);
-    addItem(paramLayout,tr("保压时间"),tr("ms"),1,1);
-    addItem(paramLayout,tr("震落时间"),tr("ms"),2,1);
-    addItem(paramLayout,tr("冷却时间"),tr("ms"),3,1);
-    addItem(paramLayout,tr("测试振幅"),tr("%"),4,1);
-
-    QWidget *pSpace = new QWidget;
-//    pSpace->setFixedSize(20,20);
-//    paramLayout->addWidget(pSpace,5,0);
+    addItem(paramLayout,QStringLiteral("下降时间"),QStringLiteral("ms"),0,0);
+    addItem(paramLayout,QStringLiteral("上升时间"),QStringLiteral("ms"),1,0);
+    addItem(paramLayout,QStringLiteral("震落振幅"),QStringLiteral("%"),2,0);
+    addItem(paramLayout,QStringLiteral("焊接能量"),QStringLiteral("J"),3,0);
+    addItem(paramLayout,QStringLiteral("初始驱动"),QStringLiteral(""),4,0);
+    addItem(paramLayout,QStringLiteral("工作模式"),QStringLiteral("" ),0,1);
+    addItem(paramLayout,QStringLiteral("工作组号"),QStringLiteral("" ),6,1,1,1);
+    addItem(paramLayout,QStringLiteral("保压时间"),QStringLiteral("ms"),1,1);
+    addItem(paramLayout,QStringLiteral("震落时间"),QStringLiteral("ms"),2,1);
+    addItem(paramLayout,QStringLiteral("冷却时间"),QStringLiteral("ms"),3,1);
+    addItem(paramLayout,QStringLiteral("测试振幅"),QStringLiteral("%"),4,1);
 
     QHBoxLayout *hLayout = new QHBoxLayout;
-    QPushButton *btnLoadGroup = new QPushButton(tr("读取"));
+    QPushButton *btnLoadGroup = new QPushButton(QStringLiteral("读取"));
     hLayout->addStretch();
     hLayout->addWidget(btnLoadGroup);
  //   hLayout->addStretch();
@@ -162,33 +150,30 @@ GroupPage::GroupPage(bool bEnable, QWidget *parent)
     , m_bEnable(bEnable)
 {
 
-    QGroupBox *paramGroup = new QGroupBox(tr("工作参数"));
-    QGroupBox *curveGroup = new QGroupBox(tr("曲线参数"));
+    QGroupBox *paramGroup = new QGroupBox(QStringLiteral("工作参数"));
+    QGroupBox *curveGroup = new QGroupBox(QStringLiteral("曲线参数"));
     QGridLayout *mainLayout = new QGridLayout;
     mainLayout->addWidget(paramGroup,0,0);
     QGridLayout *paramLayout = new QGridLayout;
     paramGroup->setLayout(paramLayout);
-    addItem(paramLayout,tr("下降时间"),tr("ms"),0,0);
-    addItem(paramLayout,tr("上升时间"),tr("ms"),1,0);
-    addItem(paramLayout,tr("震落振幅"),tr("%"),2,0);
-    addItem(paramLayout,tr("焊接能量"),tr("J"),3,0);
-    addItem(paramLayout,tr("初始驱动"),tr(""),4,0);
-    addItem(paramLayout,tr("工作模式"),tr("" ),0,1);
-    addItem(paramLayout,tr("保压时间"),tr("ms"),1,1);
-    addItem(paramLayout,tr("震落时间"),tr("ms"),2,1);
-    addItem(paramLayout,tr("冷却时间"),tr("ms"),3,1);
-    addItem(paramLayout,tr("测试振幅"),tr("%"),4,1);
+    addItem(paramLayout,QStringLiteral("下降时间"),QStringLiteral("ms"),0,0);
+    addItem(paramLayout,QStringLiteral("上升时间"),QStringLiteral("ms"),1,0);
+    addItem(paramLayout,QStringLiteral("震落振幅"),QStringLiteral("%"),2,0);
+    addItem(paramLayout,QStringLiteral("焊接能量"),QStringLiteral("J"),3,0);
+    addItem(paramLayout,QStringLiteral("初始驱动"),QStringLiteral(""),4,0);
+    addItem(paramLayout,QStringLiteral("工作模式"),QStringLiteral("" ),0,1);
+    addItem(paramLayout,QStringLiteral("保压时间"),QStringLiteral("ms"),1,1);
+    addItem(paramLayout,QStringLiteral("震落时间"),QStringLiteral("ms"),2,1);
+    addItem(paramLayout,QStringLiteral("冷却时间"),QStringLiteral("ms"),3,1);
+    addItem(paramLayout,QStringLiteral("测试振幅"),QStringLiteral("%"),4,1);
 
-    QWidget *pSpace = new QWidget;
-//    pSpace->setFixedSize(20,20);
-//    paramLayout->addWidget(pSpace,5,0);
 
     QHBoxLayout *hLayout = new QHBoxLayout;
-    QPushButton *btnLoadGroup = new QPushButton(tr("读取"));
-    QPushButton *btnSaveGroup = new QPushButton(tr("保存"));
-    QLabel *labelGroup = new QLabel(tr("工作组号:"));
+    QPushButton *btnLoadGroup = new QPushButton(QStringLiteral("读取"));
+    QPushButton *btnSaveGroup = new QPushButton(QStringLiteral("保存"));
+    QLabel *labelGroup = new QLabel(QStringLiteral("工作组号:"));
     QLineEdit *editGroup = new QLineEdit;
-    QPushButton *btnDownloadGroup = new QPushButton(tr("下载"));
+    QPushButton *btnDownloadGroup = new QPushButton(QStringLiteral("下载"));
     btnDownloadGroup->setStyleSheet("background-color:green");
 
     if(!m_bEnable)
@@ -232,10 +217,10 @@ GroupPage::GroupPage(bool bEnable, QWidget *parent)
 void GroupPage::addItem(QGridLayout *layout, const QString &title, const QString &unit,int row,int column,int rowSpan,int columnSpan)
 {
     QHBoxLayout *hLayout = new QHBoxLayout;
-    QLabel *titleLabel = new QLabel(title+tr(":"));
+    QLabel *titleLabel = new QLabel(title+QStringLiteral(":"));
     QLineEdit *contentEdit = new QLineEdit;
     QLabel *unitLabel = new QLabel(unit);
-    QPushButton *downloadBtn = new QPushButton(tr("下载"));
+    QPushButton *downloadBtn = new QPushButton(QStringLiteral("下载"));
     downloadBtn->setStyleSheet("background-color:green");
     if(!m_bEnable)
     {
@@ -269,8 +254,17 @@ void GroupPage::addItem(QGridLayout *layout, const int * pointsY, int row, int c
 //    }
 //    scene->addPath(curvePath);
 
-    QGraphicsView *view = new QGraphicsView(scene);
-    layout->addWidget(view,row,column,rowSpan,columnSpan);
+    QGraphicsView *curveView = new QGraphicsView(scene);
+    curveView->setScene(scene);
+    curveView->setAttribute(Qt::WA_TranslucentBackground,true);
+    QPalette  myPalette;
+    QColor  myColor(100,100,0);
+    myColor.setAlphaF(0.5);
+    myPalette.setBrush(curveView->backgroundRole(),myColor);
+    curveView->setPalette(myPalette);
+    curveView->setStyleSheet("border:0px");//无边框，背景透明
+    curveView->setAutoFillBackground(true);//这个的话就不会了，只有view透明
+    layout->addWidget(curveView,row,column,rowSpan,columnSpan);
 }
 
 
@@ -279,23 +273,25 @@ WorkPage::WorkPage(QWidget *parent)
     : QWidget(parent)
 {
 
-    QGroupBox *paramGroup = new QGroupBox(tr("工作参数"));
-    QGroupBox *statusGroup = new QGroupBox(tr("实时数据"));
+//    QGroupBox *paramGroup = new QGroupBox(QStringLiteral("工作参数"));
+    QGroupBox *paramGroup = new QGroupBox(QString::fromLocal8Bit("工作参数"));
+//    QGroupBox *statusGroup = new QGroupBox(QStringLiteral("实时数据"));
+    QGroupBox *statusGroup = new QGroupBox(QStringLiteral("实时数据"));
     QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->addWidget(paramGroup);
     QGridLayout *paramLayout = new QGridLayout;
     paramGroup->setLayout(paramLayout);
-    addItem(paramLayout,tr("下降时间"),tr("ms"),0,0);
-    addItem(paramLayout,tr("上升时间"),tr("ms"),1,0);
-    addItem(paramLayout,tr("震落振幅"),tr("%"),2,0);
-    addItem(paramLayout,tr("焊接能量"),tr("J"),3,0);
-    addItem(paramLayout,tr("初始驱动"),tr(""),4,0);
-    addItem(paramLayout,tr("工作模式"),tr("" ),5,0);
-    addItem(paramLayout,tr("工作组号"),tr("" ),6,0);
-    addItem(paramLayout,tr("保压时间"),tr("ms"),0,1);
-    addItem(paramLayout,tr("震落时间"),tr("ms"),1,1);
-    addItem(paramLayout,tr("冷却时间"),tr("ms"),2,1);
-    addItem(paramLayout,tr("测试振幅"),tr("%"),3,1);
+    addItem(paramLayout,QStringLiteral("下降时间"),QStringLiteral("ms"),0,0);
+    addItem(paramLayout,QStringLiteral("上升时间"),QStringLiteral("ms"),1,0);
+    addItem(paramLayout,QStringLiteral("震落振幅"),QStringLiteral("%"),2,0);
+    addItem(paramLayout,QStringLiteral("焊接能量"),QStringLiteral("J"),3,0);
+    addItem(paramLayout,QStringLiteral("初始驱动"),QStringLiteral(""),4,0);
+    addItem(paramLayout,QStringLiteral("工作模式"),QStringLiteral("" ),5,0);
+    addItem(paramLayout,QStringLiteral("工作组号"),QStringLiteral("" ),6,0);
+    addItem(paramLayout,QStringLiteral("保压时间"),QStringLiteral("ms"),0,1);
+    addItem(paramLayout,QStringLiteral("震落时间"),QStringLiteral("ms"),1,1);
+    addItem(paramLayout,QStringLiteral("冷却时间"),QStringLiteral("ms"),2,1);
+    addItem(paramLayout,QStringLiteral("测试振幅"),QStringLiteral("%"),3,1);
 //    double params[ ] = {20,1};
 //    generateY(GEN_POLYNOMINAL,params,2);
 
@@ -313,14 +309,14 @@ WorkPage::WorkPage(QWidget *parent)
     mainLayout->addWidget(statusGroup);
     QGridLayout *statusLayout = new QGridLayout;
     statusGroup->setLayout(statusLayout);
-    addItem(statusLayout,tr("功  率 "),tr("ms"),0,0);
-    addItem(statusLayout,tr("峰  值 "),tr("ms"),1,0);
-    addItem(statusLayout,tr("频  率 "),tr("%"),2,0);
-    addItem(statusLayout,tr("焊接能量"),tr("J"),3,0);
-    addItem(statusLayout,tr("焊接时间"),tr(""),4,0);
-    addItem(statusLayout,tr("工件计数"),tr("" ),5,0);
-    addItem(statusLayout,tr("错误类型"),tr("ms"),6,0);
-    addItem(statusLayout,tr("上传数据数量"),tr("ms"),0,1);
+    addItem(statusLayout,QStringLiteral("功  率 "),QStringLiteral("ms"),0,0);
+    addItem(statusLayout,QStringLiteral("峰  值 "),QStringLiteral("ms"),1,0);
+    addItem(statusLayout,QStringLiteral("频  率 "),QStringLiteral("%"),2,0);
+    addItem(statusLayout,QStringLiteral("焊接能量"),QStringLiteral("J"),3,0);
+    addItem(statusLayout,QStringLiteral("焊接时间"),QStringLiteral(""),4,0);
+    addItem(statusLayout,QStringLiteral("工件计数"),QStringLiteral("" ),5,0);
+    addItem(statusLayout,QStringLiteral("错误类型"),QStringLiteral("ms"),6,0);
+    addItem(statusLayout,QStringLiteral("上传数据数量"),QStringLiteral("ms"),0,1);
 
 
     setLayout(mainLayout);
@@ -329,7 +325,7 @@ WorkPage::WorkPage(QWidget *parent)
 void WorkPage::addItem(QGridLayout *layout, const QString &title, const QString &unit,int row,int column)
 {
     QHBoxLayout *hLayout = new QHBoxLayout;
-    QLabel *titleLabel = new QLabel(title+tr(":"));
+    QLabel *titleLabel = new QLabel(title+QStringLiteral(":"));
     QLineEdit *contentEdit = new QLineEdit;
     QLabel *unitLabel = new QLabel(unit);
 
@@ -360,11 +356,17 @@ void WorkPage::addItem(QGridLayout *layout, const int * pointsY, int row, int co
     }
     scene->addPath(curvePath);
 
-    QGraphicsView *view = new QGraphicsView(scene);
-//    view->resize(500, 500);
-//    view->setWindowTitle("Graphics View");
-//    view->show();
-    layout->addWidget(view,row,column,rowSpan,columnSpan);
+    QGraphicsView *curveView = new QGraphicsView(scene);
+    curveView->setScene(scene);
+    curveView->setAttribute(Qt::WA_TranslucentBackground,true);
+    QPalette  myPalette;
+    QColor  myColor(100,100,0);
+    myColor.setAlphaF(0.5);
+    myPalette.setBrush(curveView->backgroundRole(),myColor);
+    curveView->setPalette(myPalette);
+    curveView->setStyleSheet("border:0px");//无边框，背景透明
+    curveView->setAutoFillBackground(true);//这个的话就不会了，只有view透明
+    layout->addWidget(curveView,row,column,rowSpan,columnSpan);
 }
 
 
@@ -498,38 +500,38 @@ DebugPage::DebugPage(QWidget *parent)
     : QWidget(parent)
 {
 
-    QGroupBox *cmdGroup = new QGroupBox(tr("调试命令"));
-    QGroupBox *statusGroup = new QGroupBox(tr("实时数据"));
+    QGroupBox *cmdGroup = new QGroupBox(QStringLiteral("调试命令"));
+    QGroupBox *statusGroup = new QGroupBox(QStringLiteral("实时数据"));
     QGridLayout *mainLayout = new QGridLayout;
     mainLayout->addWidget(cmdGroup,0,0);
     mainLayout->addWidget(statusGroup,0,1);
 
     QGridLayout *cmdLayout = new QGridLayout;
     cmdGroup->setLayout(cmdLayout);
-    addItem(cmdLayout,tr("机器测试"),0,0);
-    addItem(cmdLayout,tr("清除错误"),1,0);
-    addItem(cmdLayout,tr("焊头上升"),2,0);
-    addItem(cmdLayout,tr("冷却阀开启"),3,0);
-    addItem(cmdLayout,tr("成功信号\n测试开启"),4,0);
-    addItem(cmdLayout,tr("错误信号\n测试开启"),5,0);
-    addItem(cmdLayout,tr("机器工作"),0,1);
-    addItem(cmdLayout,tr("紧急停止"),1,1);
-    addItem(cmdLayout,tr("焊头下降"),2,1);
-    addItem(cmdLayout,tr("冷却阀关闭"),3,1);
-    addItem(cmdLayout,tr("成功信号\n测试关闭"),4,1);
-    addItem(cmdLayout,tr("错误信号\n测试关闭"),5,1);
+    addItem(cmdLayout,QStringLiteral("机器测试"),0,0);
+    addItem(cmdLayout,QStringLiteral("清除错误"),1,0);
+    addItem(cmdLayout,QStringLiteral("焊头上升"),2,0);
+    addItem(cmdLayout,QStringLiteral("冷却阀开启"),3,0);
+    addItem(cmdLayout,QStringLiteral("成功信号\n测试开启"),4,0);
+    addItem(cmdLayout,QStringLiteral("错误信号\n测试开启"),5,0);
+    addItem(cmdLayout,QStringLiteral("机器工作"),0,1);
+    addItem(cmdLayout,QStringLiteral("紧急停止"),1,1);
+    addItem(cmdLayout,QStringLiteral("焊头下降"),2,1);
+    addItem(cmdLayout,QStringLiteral("冷却阀关闭"),3,1);
+    addItem(cmdLayout,QStringLiteral("成功信号\n测试关闭"),4,1);
+    addItem(cmdLayout,QStringLiteral("错误信号\n测试关闭"),5,1);
 
 
     QGridLayout *statusLayout = new QGridLayout;
     statusGroup->setLayout(statusLayout);
-    addItem(statusLayout,tr("功  率"),tr("ms"),0,0);
-    addItem(statusLayout,tr("峰  值"),tr("ms"),1,0);
-    addItem(statusLayout,tr("频  率"),tr("%"),2,0);
-    addItem(statusLayout,tr("焊接能量"),tr("J"),3,0);
-    addItem(statusLayout,tr("焊接时间"),tr(""),4,0);
-    addItem(statusLayout,tr("工件计数"),tr("" ),5,0);
-    addItem(statusLayout,tr("错误类型"),tr("ms"),6,0);
-    addItem(statusLayout,tr("上传数据数量"),tr("ms"),7,0);
+    addItem(statusLayout,QStringLiteral("功  率"),QStringLiteral("ms"),0,0);
+    addItem(statusLayout,QStringLiteral("峰  值"),QStringLiteral("ms"),1,0);
+    addItem(statusLayout,QStringLiteral("频  率"),QStringLiteral("%"),2,0);
+    addItem(statusLayout,QStringLiteral("焊接能量"),QStringLiteral("J"),3,0);
+    addItem(statusLayout,QStringLiteral("焊接时间"),QStringLiteral(""),4,0);
+    addItem(statusLayout,QStringLiteral("工件计数"),QStringLiteral("" ),5,0);
+    addItem(statusLayout,QStringLiteral("错误类型"),QStringLiteral("ms"),6,0);
+    addItem(statusLayout,QStringLiteral("上传数据数量"),QStringLiteral("ms"),7,0);
 
 
     setLayout(mainLayout);
@@ -548,7 +550,7 @@ void DebugPage::addItem(QGridLayout *layout, const QString &title,int row,int co
 void DebugPage::addItem(QGridLayout *layout, const QString &title, const QString &unit,int row,int column)
 {
     QHBoxLayout *hLayout = new QHBoxLayout;
-    QLabel *titleLabel = new QLabel(title+tr(":"));
+    QLabel *titleLabel = new QLabel(title+QStringLiteral(":"));
     QLineEdit *contentEdit = new QLineEdit;
     QLabel *unitLabel = new QLabel(unit);
 
@@ -581,15 +583,15 @@ CurvePage::CurvePage(QWidget *parent)
     mainLayout->addWidget(curveView);
 
     QHBoxLayout *hLayout = new QHBoxLayout;
-    hLayout->addWidget(new QPushButton(tr("振幅")));
-    hLayout->addWidget(new QPushButton(tr("相位")));
-    hLayout->addWidget(new QPushButton(tr("电压")));
-    hLayout->addWidget(new QPushButton(tr("功率")));
-    hLayout->addWidget(new QPushButton(tr("频率")));
+    hLayout->addWidget(new QPushButton(QStringLiteral("振幅")));
+    hLayout->addWidget(new QPushButton(QStringLiteral("相位")));
+    hLayout->addWidget(new QPushButton(QStringLiteral("电压")));
+    hLayout->addWidget(new QPushButton(QStringLiteral("功率")));
+    hLayout->addWidget(new QPushButton(QStringLiteral("频率")));
 
 
     QIcon icon = QApplication::style()->standardIcon(QStyle::SP_DesktopIcon);
-    QPushButton *btnUpload = new QPushButton(tr("上传数据"));
+    QPushButton *btnUpload = new QPushButton(QStringLiteral("上传数据"));
     btnUpload->setStyleSheet("background-color:green");
     hLayout->addWidget(btnUpload);
 
@@ -604,18 +606,15 @@ AboutPage::AboutPage(QWidget *parent)
     : QWidget(parent)
 {
 
-    QGroupBox *aboutGroup = new QGroupBox(tr("关于软件"));
+    QGroupBox *aboutGroup = new QGroupBox(QStringLiteral("关于软件"));
     QVBoxLayout *aboutLayout = new QVBoxLayout;
-    QLabel *aboutLabel = new QLabel(tr("版本：UMWelding-1.0.1 \n\
+    QLabel *aboutLabel = new QLabel(QStringLiteral("版本：UMWelding-1.0.1 \n\
                                        公司：暨通信息科技有限公司@ 保留所有权利\n\
                                        地址：广州市越秀区天河路") );
     aboutLayout->addWidget(aboutLabel);
     aboutGroup->setLayout(aboutLayout);
-    QGroupBox *statusGroup = new QGroupBox(tr("实时数据"));
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(aboutGroup);
-    mainLayout->addSpacing(12);
-    mainLayout->addWidget(statusGroup);
     mainLayout->addStretch(1);
     setLayout(mainLayout);
 

@@ -71,7 +71,7 @@ ConfigDialog::ConfigDialog()
     pagesWidget->addWidget(new DebugPage);
     pagesWidget->addWidget(new AboutPage);
 
-    QPushButton *closeButton = new QPushButton(tr("Close"));
+    QPushButton *closeButton = new QPushButton(QStringLiteral("Close"));
     connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
 
     createIcons();
@@ -93,7 +93,7 @@ ConfigDialog::ConfigDialog()
     mainLayout->addLayout(buttonsLayout);
     setLayout(mainLayout);
 
-    setWindowTitle(tr("Config Dialog"));
+    setWindowTitle(QStringLiteral("Config Dialog"));
 }
 
 void ConfigDialog::addButton(QListWidget *widget,const QString &icon, const QString &text )
@@ -109,12 +109,12 @@ void ConfigDialog::addButton(QListWidget *widget,const QString &icon, const QStr
 
 void ConfigDialog::createIcons()
 {
-    addButton(contentsWidget,tr(":/images/work.png"),tr("工作"));
-    addButton(contentsWidget,tr(":/images/group.png"),tr("分组"));
-    addButton(contentsWidget,tr(":/images/config.png"),tr("设置"));
-    addButton(contentsWidget,tr(":/images/curve.png"),tr("曲线"));
-    addButton(contentsWidget,tr(":/images/debug.png"),tr("调试"));
-    addButton(contentsWidget,tr(":/images/about.png"),tr("关于"));
+    addButton(contentsWidget,QStringLiteral(":/images/work.png"),QStringLiteral("工作"));
+    addButton(contentsWidget,QStringLiteral(":/images/group.png"),QStringLiteral("分组"));
+    addButton(contentsWidget,QStringLiteral(":/images/config.png"),QStringLiteral("设置"));
+    addButton(contentsWidget,QStringLiteral(":/images/curve.png"),QStringLiteral("曲线"));
+    addButton(contentsWidget,QStringLiteral(":/images/debug.png"),QStringLiteral("调试"));
+    addButton(contentsWidget,QStringLiteral(":/images/about.png"),QStringLiteral("关于"));
 //    contentsWidget->adjustSize();
 
     connect(contentsWidget,
