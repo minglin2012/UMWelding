@@ -39,11 +39,15 @@
 ****************************************************************************/
 
 #include <QtWidgets>
-
+#include <QMessageBox>
 #include "umwelding.h"
 #include "pages.h"
 
 ConfigDialog::ConfigDialog()
+{
+}
+
+void ConfigDialog::Initialize()
 {
 
      setWindowFlags(Qt::FramelessWindowHint);
@@ -94,6 +98,18 @@ ConfigDialog::ConfigDialog()
     setLayout(mainLayout);
 
     setWindowTitle(QStringLiteral("Config Dialog"));
+
+    qDebug()<<"start modbus intialize..."<<endl;
+    m_pModbusCtx = modbus_new_rtu("/dev/ttyUSB0", 115200, 'N', 8, 1);
+    if(NULL == m_pModbusCtx) {
+        qDebug()<<"modbus_new_rtu /dev/ttyUSB1 failed!"<<endl;
+    }
+
+    modbus_set_slave(m_pModbusCtx,1);
+    if(-1 == modbus_connect(m_pModbusCtx))
+    {
+        qDebug()<<"modbus_connect failed!"<<endl;
+    }
 }
 
 void ConfigDialog::addButton(QListWidget *widget,const QString &icon, const QString &text )
@@ -104,6 +120,16 @@ void ConfigDialog::addButton(QListWidget *widget,const QString &icon, const QStr
     configButton->setText(text);
     configButton->setTextAlignment(Qt::AlignHCenter);
     configButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+}
+
+bool ConfigDialog::write(int addr, int nb, const uint16_t *data)
+{
+    //03命令
+    //modbus_read_registers(m_pModbusCtx,m_nAddr,m_nNumber,m_pDest);
+    //10命令
+    //modbus_write_registers(m_pModbusCtx,m_nAddr,m_nNumber,m_pSrc);
+
+    return (-1 != modbus_write_registers(m_pModbusCtx,addr,nb,data));
 }
 
 
@@ -128,4 +154,22 @@ void ConfigDialog::changePage(QListWidgetItem *current, QListWidgetItem *previou
         current = previous;
 
     pagesWidget->setCurrentIndex(contentsWidget->row(current));
+}
+
+void ConfigDialog::on_pushButton_clicked()
+{
+    QPushButton *btn=(QPushButton*)sender();
+    qDebug()<<btn->property("addr").toInt()<<endl;
+}
+
+
+ConfigDialog * ConfigDialog::getInstance()
+{
+    static ConfigDialog *pInstance = NULL;
+    if(NULL == pInstance)
+    {
+        pInstance = new ConfigDialog;
+    }
+    return pInstance;
+
 }

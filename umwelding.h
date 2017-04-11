@@ -42,6 +42,7 @@
 #define CONFIGDIALOG_H
 
 #include <QDialog>
+#include <modbus.h>
 
 QT_BEGIN_NAMESPACE
 class QListWidget;
@@ -55,13 +56,19 @@ class ConfigDialog : public QDialog
 
 public:
     ConfigDialog();
+    static ConfigDialog* getInstance();
+    void Initialize();
 
 public slots:
     void changePage(QListWidgetItem *current, QListWidgetItem *previous);
-
+    void on_pushButton_clicked();
 private:
     void createIcons();
     void addButton(QListWidget *widget,const QString &icon, const QString &text );
+
+    bool write(int addr, int nb, const uint16_t *data);
+private:
+    modbus_t *m_pModbusCtx;
 
     QListWidget *contentsWidget;
     QStackedWidget *pagesWidget;

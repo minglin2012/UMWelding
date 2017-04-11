@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 #include <QtWidgets>
-
+#include "umwelding.h"
 #include "pages.h"
 #include "math.h"
 #include <iostream>
@@ -154,6 +154,7 @@ GroupPage::GroupPage(bool bEnable, QWidget *parent)
     QGroupBox *curveGroup = new QGroupBox(QStringLiteral("曲线参数"));
     QGridLayout *mainLayout = new QGridLayout;
     mainLayout->addWidget(paramGroup,0,0);
+    mainLayout->setColumnStretch(0,1);
     QGridLayout *paramLayout = new QGridLayout;
     paramGroup->setLayout(paramLayout);
     addItem(paramLayout,QStringLiteral("下降时间"),QStringLiteral("ms"),0,0);
@@ -176,17 +177,24 @@ GroupPage::GroupPage(bool bEnable, QWidget *parent)
     QPushButton *btnDownloadGroup = new QPushButton(QStringLiteral("下载"));
     btnDownloadGroup->setStyleSheet("background-color:green");
 
-    if(!m_bEnable)
+    hLayout->addStretch();
+    if(!bEnable)
     {
-        hLayout->addStretch();
         hLayout->addWidget(btnLoadGroup);
-        hLayout->addWidget(btnSaveGroup);
-        hLayout->addWidget(labelGroup);
-        hLayout->addWidget(editGroup);
-        hLayout->addWidget(btnDownloadGroup);
-        hLayout->addStretch();
-        paramLayout->addLayout(hLayout,6,0,1,2);
     }
+    else
+    {
+        hLayout->addWidget(btnSaveGroup);
+    }
+    hLayout->addWidget(labelGroup);
+    hLayout->addWidget(editGroup);
+    if(!bEnable)
+    {
+        hLayout->addWidget(btnDownloadGroup);
+    }
+    hLayout->addStretch();
+    paramLayout->addLayout(hLayout,5,0,1,2);
+    paramLayout->setRowStretch(5,1);
  //   hLayout->addStretch();
 
 //    double params[ ] = {20,1};
@@ -203,6 +211,7 @@ GroupPage::GroupPage(bool bEnable, QWidget *parent)
 
 //    mainLayout->addSpacing(12);
     mainLayout->addWidget(curveGroup,0,1);
+    mainLayout->setColumnStretch(1,1);
 
     QGridLayout *curveLayout = new QGridLayout;
     curveGroup->setLayout(curveLayout);
@@ -232,6 +241,7 @@ void GroupPage::addItem(QGridLayout *layout, const QString &title, const QString
     hLayout->addWidget(unitLabel,1,Qt::AlignLeft);
     hLayout->addWidget(downloadBtn,1,Qt::AlignLeft);
     layout->addLayout(hLayout,row,column,rowSpan,columnSpan);
+    layout->setRowStretch(row,1);
 }
 
 void GroupPage::addItem(QGridLayout *layout, const int * pointsY, int row, int column, int rowSpan, int columnSpan)
@@ -333,6 +343,7 @@ void WorkPage::addItem(QGridLayout *layout, const QString &title, const QString 
     hLayout->addWidget(contentEdit,2,Qt::AlignLeft);
     hLayout->addWidget(unitLabel,1,Qt::AlignLeft);
     layout->addLayout(hLayout,row,column);
+    layout->setRowStretch(row,1);
 }
 
 void WorkPage::addItem(QGridLayout *layout, const int * pointsY, int row, int column, int rowSpan, int columnSpan)
@@ -351,13 +362,14 @@ void WorkPage::addItem(QGridLayout *layout, const int * pointsY, int row, int co
     curvePath.moveTo(0,HEIGHT-(pointsY[0]*yFactor));
     for(int i=1;i<1000;i+=1)
     {
-        cout<<"line To :"<<i<<":"<<i*xFactor<<","<<HEIGHT-(pointsY[i]*yFactor)<<endl;
+//        cout<<"line To :"<<i<<":"<<i*xFactor<<","<<HEIGHT-(pointsY[i]*yFactor)<<endl;
         curvePath.lineTo(int(i*xFactor),int(HEIGHT-(pointsY[i]*yFactor)));
     }
     scene->addPath(curvePath);
 
     QGraphicsView *curveView = new QGraphicsView(scene);
     curveView->setScene(scene);
+//    curveView->setFixedSize();
     curveView->setAttribute(Qt::WA_TranslucentBackground,true);
     QPalette  myPalette;
     QColor  myColor(100,100,0);
@@ -468,7 +480,6 @@ bool WorkPage::generateY(EGenAlgorithm algo, QPoint  *points, int pointAmount, i
             for(int j=0;j<lagrangeFactor+1;j++)
             {
                 baseLagrange[j] = 1;
-                 qDebug()<<"j="<<j<<endl;
                 for(int k=0;k<lagrangeFactor+1;k++)
                 {
                     if(k!=j)
@@ -486,7 +497,7 @@ bool WorkPage::generateY(EGenAlgorithm algo, QPoint  *points, int pointAmount, i
                 pointsY[i] += basePoints[j].y()*baseLagrange[j];
             }
 
-             cout<<"inter pointsY ["<<i<<"]="<<pointsY[i]<<endl;
+//             cout<<"inter pointsY ["<<i<<"]="<<pointsY[i]<<endl;
         }
     }
         break;
@@ -504,22 +515,24 @@ DebugPage::DebugPage(QWidget *parent)
     QGroupBox *statusGroup = new QGroupBox(QStringLiteral("实时数据"));
     QGridLayout *mainLayout = new QGridLayout;
     mainLayout->addWidget(cmdGroup,0,0);
+    mainLayout->setColumnStretch(0,1);
     mainLayout->addWidget(statusGroup,0,1);
+    mainLayout->setColumnStretch(1,1);
 
     QGridLayout *cmdLayout = new QGridLayout;
     cmdGroup->setLayout(cmdLayout);
-    addItem(cmdLayout,QStringLiteral("机器测试"),0,0);
-    addItem(cmdLayout,QStringLiteral("清除错误"),1,0);
-    addItem(cmdLayout,QStringLiteral("焊头上升"),2,0);
-    addItem(cmdLayout,QStringLiteral("冷却阀开启"),3,0);
-    addItem(cmdLayout,QStringLiteral("成功信号\n测试开启"),4,0);
-    addItem(cmdLayout,QStringLiteral("错误信号\n测试开启"),5,0);
-    addItem(cmdLayout,QStringLiteral("机器工作"),0,1);
-    addItem(cmdLayout,QStringLiteral("紧急停止"),1,1);
-    addItem(cmdLayout,QStringLiteral("焊头下降"),2,1);
-    addItem(cmdLayout,QStringLiteral("冷却阀关闭"),3,1);
-    addItem(cmdLayout,QStringLiteral("成功信号\n测试关闭"),4,1);
-    addItem(cmdLayout,QStringLiteral("错误信号\n测试关闭"),5,1);
+    addItem(cmdLayout,QStringLiteral("机器测试"),0,0,0);
+    addItem(cmdLayout,QStringLiteral("清除错误"),2,1,0);
+    addItem(cmdLayout,QStringLiteral("焊头上升"),3,2,0);
+    addItem(cmdLayout,QStringLiteral("冷却阀开启"),4,3,0);
+    addItem(cmdLayout,QStringLiteral("成功信号\n测试开启"),0,4,0);
+    addItem(cmdLayout,QStringLiteral("错误信号\n测试开启"),0,5,0);
+    addItem(cmdLayout,QStringLiteral("机器工作"),5,0,1);
+    addItem(cmdLayout,QStringLiteral("紧急停止"),6,1,1);
+    addItem(cmdLayout,QStringLiteral("焊头下降"),7,2,1);
+    addItem(cmdLayout,QStringLiteral("冷却阀关闭"),8,3,1);
+    addItem(cmdLayout,QStringLiteral("成功信号\n测试关闭"),9,4,1);
+    addItem(cmdLayout,QStringLiteral("错误信号\n测试关闭"),10,5,1);
 
 
     QGridLayout *statusLayout = new QGridLayout;
@@ -537,10 +550,13 @@ DebugPage::DebugPage(QWidget *parent)
     setLayout(mainLayout);
 }
 
-void DebugPage::addItem(QGridLayout *layout, const QString &title,int row,int column,int rowSpan,int columnSpan)
+void DebugPage::addItem(QGridLayout *layout, const QString &title, int addr, int row,int column,int rowSpan,int columnSpan)
 {
     QPushButton *downloadBtn = new QPushButton(title);
+    downloadBtn->setProperty("addr",addr);
+ //   downloadBtn->setProperty("data",data);
     downloadBtn->setStyleSheet("background-color:green");
+    connect(downloadBtn,&QPushButton::clicked,ConfigDialog::getInstance(),&ConfigDialog::on_pushButton_clicked);
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->addWidget(downloadBtn);
     hLayout->addStretch();
@@ -608,7 +624,8 @@ AboutPage::AboutPage(QWidget *parent)
 
     QGroupBox *aboutGroup = new QGroupBox(QStringLiteral("关于软件"));
     QVBoxLayout *aboutLayout = new QVBoxLayout;
-    QLabel *aboutLabel = new QLabel(QStringLiteral("版本：UMWelding-1.0.1 \n\
+    QLabel *aboutLabel = new QLabel(QStringLiteral("\n\
+                                       版本：UMWelding-1.0.1 \n\
                                        公司：暨通信息科技有限公司@ 保留所有权利\n\
                                        地址：广州市越秀区天河路") );
     aboutLayout->addWidget(aboutLabel);

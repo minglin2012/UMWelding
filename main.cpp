@@ -39,6 +39,8 @@
 ****************************************************************************/
 
 #include <QApplication>
+#include <QObjectUserData>
+
 
 #include "umwelding.h"
 
@@ -54,6 +56,8 @@ int main(int argc, char *argv[])
     font.setPixelSize(25);
     app.setFont(font);
     app.setApplicationDisplayName("Qt Example");
-    ConfigDialog dialog;
-    return dialog.exec();
+    ConfigDialog *mainwindow = ConfigDialog::getInstance();
+    mainwindow->Initialize();
+//    app.setProperty("configdialog",mainwindow);
+    return mainwindow->exec();
 }

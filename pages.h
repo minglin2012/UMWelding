@@ -111,7 +111,7 @@ class DebugPage : public QWidget
 {
 public:
     DebugPage(QWidget *parent = 0);
-    void addItem(QGridLayout *layout, const QString &title,int row,int column,int rowSpan=1,int columnSpan=1);
+    void addItem(QGridLayout *layout, const QString &title, int addr,int row,int column,int rowSpan=1,int columnSpan=1);
     void addItem(QGridLayout *layout, const QString &title, const QString &unit,int row,int column);
 };
 
