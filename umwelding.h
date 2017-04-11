@@ -42,6 +42,7 @@
 #define CONFIGDIALOG_H
 
 #include <QDialog>
+#include <QComboBox>
 #include <modbus.h>
 
 QT_BEGIN_NAMESPACE
@@ -61,7 +62,8 @@ public:
 
 public slots:
     void changePage(QListWidgetItem *current, QListWidgetItem *previous);
-    void on_pushButton_clicked();
+    void on_downloadButton_clicked();
+    void on_downloadGroupButton_clicked();
 private:
     void createIcons();
     void addButton(QListWidget *widget,const QString &icon, const QString &text );
@@ -72,6 +74,8 @@ private:
 
     QListWidget *contentsWidget;
     QStackedWidget *pagesWidget;
+public:
+    QComboBox *groupBox;
 };
 
 #endif

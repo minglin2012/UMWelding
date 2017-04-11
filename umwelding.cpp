@@ -156,10 +156,38 @@ void ConfigDialog::changePage(QListWidgetItem *current, QListWidgetItem *previou
     pagesWidget->setCurrentIndex(contentsWidget->row(current));
 }
 
-void ConfigDialog::on_pushButton_clicked()
+void ConfigDialog::on_downloadButton_clicked()
 {
     QPushButton *btn=(QPushButton*)sender();
-    qDebug()<<btn->property("addr").toInt()<<endl;
+    QVariant var_addr = btn->property("addr");
+    QVariant var_data = btn->property("data");
+    QVariant var_lineedit = btn->property("lineedit");
+    QVariant var_combobox = btn->property("combobox");
+    if(!var_addr.isValid()) { return ;}
+    int addr = var_addr.toInt();
+    uint16_t data;
+    if(var_data.isValid()) {
+        data = var_data.toUInt();
+    }
+    else if(var_lineedit.isValid()){
+        data = var_lineedit.value<QLineEdit*>()->text().toInt();
+    }
+    else if(var_combobox.isValid()) {
+        data = var_combobox.value<QComboBox*>()->currentIndex();
+    }
+    else {
+        return;
+    }
+
+    qDebug()<<"modbus_write_registers:addr["<<(void*)addr<<"],data["<<data<<"]";
+    QString text;
+    text += QString("地址[%1H],数据[%2H]" ).arg(QString::number(addr,16),4,QChar('0')).arg(QString::number(data,16),4,QChar('0') );
+    QMessageBox::information(NULL,QStringLiteral("下载信息"),text);
+}
+void ConfigDialog::on_downloadGroupButton_clicked()
+{
+    QMessageBox::information(NULL,tr("info"),tr("download group"));
+
 }
 
 

@@ -90,59 +90,6 @@ QueryPage::QueryPage(QWidget *parent)
 
 
 
-GroupPage::GroupPage(QWidget *parent)
-    : QWidget(parent)
-{
-
-    QGroupBox *paramGroup = new QGroupBox(QStringLiteral("工作参数"));
-    QGroupBox *curveGroup = new QGroupBox(QStringLiteral("曲线参数"));
-    QGridLayout *mainLayout = new QGridLayout;
-    mainLayout->addWidget(paramGroup,0,0);
-    QGridLayout *paramLayout = new QGridLayout;
-    paramGroup->setLayout(paramLayout);
-    addItem(paramLayout,QStringLiteral("下降时间"),QStringLiteral("ms"),0,0);
-    addItem(paramLayout,QStringLiteral("上升时间"),QStringLiteral("ms"),1,0);
-    addItem(paramLayout,QStringLiteral("震落振幅"),QStringLiteral("%"),2,0);
-    addItem(paramLayout,QStringLiteral("焊接能量"),QStringLiteral("J"),3,0);
-    addItem(paramLayout,QStringLiteral("初始驱动"),QStringLiteral(""),4,0);
-    addItem(paramLayout,QStringLiteral("工作模式"),QStringLiteral("" ),0,1);
-    addItem(paramLayout,QStringLiteral("工作组号"),QStringLiteral("" ),6,1,1,1);
-    addItem(paramLayout,QStringLiteral("保压时间"),QStringLiteral("ms"),1,1);
-    addItem(paramLayout,QStringLiteral("震落时间"),QStringLiteral("ms"),2,1);
-    addItem(paramLayout,QStringLiteral("冷却时间"),QStringLiteral("ms"),3,1);
-    addItem(paramLayout,QStringLiteral("测试振幅"),QStringLiteral("%"),4,1);
-
-    QHBoxLayout *hLayout = new QHBoxLayout;
-    QPushButton *btnLoadGroup = new QPushButton(QStringLiteral("读取"));
-    hLayout->addStretch();
-    hLayout->addWidget(btnLoadGroup);
- //   hLayout->addStretch();
-    paramLayout->addLayout(hLayout,6,0,1,1);
-
-//    double params[ ] = {20,1};
-//    generateY(GEN_POLYNOMINAL,params,2);
-
-//    double params[] = {100,2*3.14/200,0 };
-//    generateY(GEN_SIN,params,3);
-//    addItem(paramLayout,pointsY ,4,1,3,1);
-//    QPoint points[] = {QPoint(0,100),QPoint(100,200),QPoint(200,0),QPoint(300,80),QPoint(500,100),QPoint(600,50),QPoint(700,100),QPoint(800,0),QPoint(999,50)};
-//    QPoint points[] = {QPoint(1,50) };
-//    generateY(GEN_LAGRANGE_INTER,points,9,8);
-
-
-
-//    mainLayout->addSpacing(12);
-    mainLayout->addWidget(curveGroup,0,1);
-
-    QGridLayout *curveLayout = new QGridLayout;
-    curveGroup->setLayout(curveLayout);
-    curveLayout->setSpacing(30);
-    QWidget *pSpace2 = new QWidget;
-    curveLayout->addWidget(pSpace2);
-    addItem(curveLayout,pointsY ,1,0,1,1);
-
-    setLayout(mainLayout);
-}
 
 GroupPage::GroupPage(bool bEnable, QWidget *parent)
 
@@ -155,25 +102,34 @@ GroupPage::GroupPage(bool bEnable, QWidget *parent)
     QGridLayout *mainLayout = new QGridLayout;
     mainLayout->addWidget(paramGroup,0,0);
     mainLayout->setColumnStretch(0,1);
+    mainLayout->setSpacing(20);
     QGridLayout *paramLayout = new QGridLayout;
     paramGroup->setLayout(paramLayout);
-    addItem(paramLayout,QStringLiteral("下降时间"),QStringLiteral("ms"),0,0);
-    addItem(paramLayout,QStringLiteral("上升时间"),QStringLiteral("ms"),1,0);
-    addItem(paramLayout,QStringLiteral("震落振幅"),QStringLiteral("%"),2,0);
-    addItem(paramLayout,QStringLiteral("焊接能量"),QStringLiteral("J"),3,0);
-    addItem(paramLayout,QStringLiteral("初始驱动"),QStringLiteral(""),4,0);
-    addItem(paramLayout,QStringLiteral("工作模式"),QStringLiteral("" ),0,1);
-    addItem(paramLayout,QStringLiteral("保压时间"),QStringLiteral("ms"),1,1);
-    addItem(paramLayout,QStringLiteral("震落时间"),QStringLiteral("ms"),2,1);
-    addItem(paramLayout,QStringLiteral("冷却时间"),QStringLiteral("ms"),3,1);
-    addItem(paramLayout,QStringLiteral("测试振幅"),QStringLiteral("%"),4,1);
+
+    addItem(paramLayout,QStringLiteral("下降时间"),QStringLiteral("ms"),QStringLiteral("20"),0x256E,0,0);
+    addItem(paramLayout,QStringLiteral("上升时间"),QStringLiteral("ms"),QStringLiteral("100"),0x2570,1,0);
+    addItem(paramLayout,QStringLiteral("震落振幅"),QStringLiteral("%") ,QStringLiteral("60"),0x2572,2,0);
+    addItem(paramLayout,QStringLiteral("焊接能量"),QStringLiteral("J") ,QStringLiteral("2000"),0x2574,3,0);
+    addItem(paramLayout,QStringLiteral("初始驱动"),QStringLiteral("")  ,QStringLiteral("30"),0x2576,4,0);
+
+//    addItem(paramLayout,QStringLiteral("工作模式"),QStringLiteral("" ),0,1);
+    QStringList list;
+    list<<QStringLiteral("智能模式")<<QStringLiteral("能量模式")<<QStringLiteral("时间模式")<<QStringLiteral("高度模式");
+    addItem(paramLayout,QStringLiteral("工作模式"),list,QStringLiteral(""),0x2577 ,0,1);
+
+    addItem(paramLayout,QStringLiteral("保压时间"),QStringLiteral("ms") ,QStringLiteral("100"),0x256F,1,1);
+    addItem(paramLayout,QStringLiteral("震落时间"),QStringLiteral("ms") ,QStringLiteral("500"),0x2571,2,1);
+    addItem(paramLayout,QStringLiteral("冷却时间"),QStringLiteral("ms") ,QStringLiteral("3000"),0x2573,3,1);
+    addItem(paramLayout,QStringLiteral("测试振幅"),QStringLiteral("%")  ,QStringLiteral("50"),0x2575,4,1);
 
 
     QHBoxLayout *hLayout = new QHBoxLayout;
     QPushButton *btnLoadGroup = new QPushButton(QStringLiteral("读取"));
     QPushButton *btnSaveGroup = new QPushButton(QStringLiteral("保存"));
+
     QLabel *labelGroup = new QLabel(QStringLiteral("工作组号:"));
-    QLineEdit *editGroup = new QLineEdit;
+//    QLineEdit *editGroup = new QLineEdit;
+    QComboBox *comboGroup = new QComboBox;
     QPushButton *btnDownloadGroup = new QPushButton(QStringLiteral("下载"));
     btnDownloadGroup->setStyleSheet("background-color:green");
 
@@ -181,16 +137,20 @@ GroupPage::GroupPage(bool bEnable, QWidget *parent)
     if(!bEnable)
     {
         hLayout->addWidget(btnLoadGroup);
+        connect(btnLoadGroup,&QPushButton::clicked,this,&GroupPage::on_loadButton_clicked);
     }
     else
     {
         hLayout->addWidget(btnSaveGroup);
+        connect(btnSaveGroup,&QPushButton::clicked,this,&GroupPage::on_saveButton_clicked);
     }
-    hLayout->addWidget(labelGroup);
-    hLayout->addWidget(editGroup);
     if(!bEnable)
     {
+        hLayout->addWidget(labelGroup);
+        hLayout->addWidget(comboGroup);
+        ConfigDialog::getInstance()->groupBox = comboGroup;
         hLayout->addWidget(btnDownloadGroup);
+        connect(btnDownloadGroup,&QPushButton::clicked,ConfigDialog::getInstance(),&ConfigDialog::on_downloadGroupButton_clicked);
     }
     hLayout->addStretch();
     paramLayout->addLayout(hLayout,5,0,1,2);
@@ -223,14 +183,19 @@ GroupPage::GroupPage(bool bEnable, QWidget *parent)
     setLayout(mainLayout);
 }
 
-void GroupPage::addItem(QGridLayout *layout, const QString &title, const QString &unit,int row,int column,int rowSpan,int columnSpan)
+void GroupPage::addItem(QGridLayout *layout, const QString &title, const QString &unit,const QString &initValue,int addr,int row,int column,int rowSpan,int columnSpan)
 {
     QHBoxLayout *hLayout = new QHBoxLayout;
     QLabel *titleLabel = new QLabel(title+QStringLiteral(":"));
     QLineEdit *contentEdit = new QLineEdit;
+    contentEdit->setValidator(new QIntValidator(0,1000,this));
+    contentEdit->setText(initValue);
+    contentEdit->setMinimumWidth(80);
     QLabel *unitLabel = new QLabel(unit);
     QPushButton *downloadBtn = new QPushButton(QStringLiteral("下载"));
     downloadBtn->setStyleSheet("background-color:green");
+    downloadBtn->setProperty("addr",addr);
+    downloadBtn->setProperty("lineedit",QVariant::fromValue(contentEdit))  ;
     if(!m_bEnable)
     {
         downloadBtn->hide();
@@ -240,6 +205,33 @@ void GroupPage::addItem(QGridLayout *layout, const QString &title, const QString
     hLayout->addWidget(contentEdit,1,Qt::AlignLeft);
     hLayout->addWidget(unitLabel,1,Qt::AlignLeft);
     hLayout->addWidget(downloadBtn,1,Qt::AlignLeft);
+    connect(downloadBtn,&QPushButton::clicked,ConfigDialog::getInstance(),&ConfigDialog::on_downloadButton_clicked);
+    layout->addLayout(hLayout,row,column,rowSpan,columnSpan);
+    layout->setRowStretch(row,1);
+}
+
+void GroupPage::addItem(QGridLayout *layout, const QString &title, const QStringList &contents, const QString &unit,int addr,int row,int column,int rowSpan,int columnSpan)
+{
+    QHBoxLayout *hLayout = new QHBoxLayout;
+    QLabel *titleLabel = new QLabel(title+QStringLiteral(":"));
+    QComboBox *contentCbb = new QComboBox;
+    contentCbb->addItems(contents);
+//    contentEdit->setValidator(new QIntValidator(0,1000,this));
+    QLabel *unitLabel = new QLabel(unit);
+    QPushButton *downloadBtn = new QPushButton(QStringLiteral("下载"));
+    downloadBtn->setStyleSheet("background-color:green");
+    downloadBtn->setProperty("addr",addr);
+    downloadBtn->setProperty("combobox",QVariant::fromValue(contentCbb))  ;
+    if(!m_bEnable)
+    {
+        downloadBtn->hide();
+    }
+
+    hLayout->addWidget(titleLabel,1,Qt::AlignRight);
+    hLayout->addWidget(contentCbb,1,Qt::AlignLeft);
+    hLayout->addWidget(unitLabel,1,Qt::AlignLeft);
+    hLayout->addWidget(downloadBtn,1,Qt::AlignLeft);
+    connect(downloadBtn,&QPushButton::clicked,ConfigDialog::getInstance(),&ConfigDialog::on_downloadButton_clicked);
     layout->addLayout(hLayout,row,column,rowSpan,columnSpan);
     layout->setRowStretch(row,1);
 }
@@ -277,6 +269,25 @@ void GroupPage::addItem(QGridLayout *layout, const int * pointsY, int row, int c
     layout->addWidget(curveView,row,column,rowSpan,columnSpan);
 }
 
+void GroupPage::on_saveButton_clicked()
+{
+    QMessageBox::information(NULL,tr("info"),tr("save group"));
+
+    bool ok;
+    QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                         tr("User name:"), QLineEdit::Normal,
+                                         QDir::home().dirName(), &ok);
+    if (ok && !text.isEmpty())
+    {
+        ConfigDialog::getInstance()->groupBox->addItem(text );
+    }
+        //textLabel->setText(text);
+}
+
+void GroupPage::on_loadButton_clicked()
+{
+    QMessageBox::information(NULL,tr("info"),tr("load group"));
+}
 
 
 WorkPage::WorkPage(QWidget *parent)
@@ -521,18 +532,18 @@ DebugPage::DebugPage(QWidget *parent)
 
     QGridLayout *cmdLayout = new QGridLayout;
     cmdGroup->setLayout(cmdLayout);
-    addItem(cmdLayout,QStringLiteral("机器测试"),0,0,0);
-    addItem(cmdLayout,QStringLiteral("清除错误"),2,1,0);
-    addItem(cmdLayout,QStringLiteral("焊头上升"),3,2,0);
-    addItem(cmdLayout,QStringLiteral("冷却阀开启"),4,3,0);
-    addItem(cmdLayout,QStringLiteral("成功信号\n测试开启"),0,4,0);
-    addItem(cmdLayout,QStringLiteral("错误信号\n测试开启"),0,5,0);
-    addItem(cmdLayout,QStringLiteral("机器工作"),5,0,1);
-    addItem(cmdLayout,QStringLiteral("紧急停止"),6,1,1);
-    addItem(cmdLayout,QStringLiteral("焊头下降"),7,2,1);
-    addItem(cmdLayout,QStringLiteral("冷却阀关闭"),8,3,1);
-    addItem(cmdLayout,QStringLiteral("成功信号\n测试关闭"),9,4,1);
-    addItem(cmdLayout,QStringLiteral("错误信号\n测试关闭"),10,5,1);
+    addItem(cmdLayout,QStringLiteral("机器测试"),0x26FF,0x0002,0,0);
+    addItem(cmdLayout,QStringLiteral("清除错误"),0x26FF,0x0001,1,0);
+    addItem(cmdLayout,QStringLiteral("焊头上升"),0x26FF,0x0005,2,0);
+    addItem(cmdLayout,QStringLiteral("冷却阀开启"),0x26FF,0x0007,3,0);
+    addItem(cmdLayout,QStringLiteral("成功信号\n测试开启"),0x26FF,0x0009,4,0);
+    addItem(cmdLayout,QStringLiteral("错误信号\n测试开启"),0x26FF,0x0011,5,0);
+    addItem(cmdLayout,QStringLiteral("机器工作"),0x26FF,0x0003,0,1);
+    addItem(cmdLayout,QStringLiteral("紧急停止"),0x26FF,0x0004,1,1);
+    addItem(cmdLayout,QStringLiteral("焊头下降"),0x26FF,0x0006,2,1);
+    addItem(cmdLayout,QStringLiteral("冷却阀关闭"),0x26FF,0x0008,3,1);
+    addItem(cmdLayout,QStringLiteral("成功信号\n测试关闭"),0x26FF,0x0010,4,1);
+    addItem(cmdLayout,QStringLiteral("错误信号\n测试关闭"),0x26FF,0x0012,5,1);
 
 
     QGridLayout *statusLayout = new QGridLayout;
@@ -550,13 +561,13 @@ DebugPage::DebugPage(QWidget *parent)
     setLayout(mainLayout);
 }
 
-void DebugPage::addItem(QGridLayout *layout, const QString &title, int addr, int row,int column,int rowSpan,int columnSpan)
+void DebugPage::addItem(QGridLayout *layout, const QString &title, int addr,int data, int row,int column,int rowSpan,int columnSpan)
 {
     QPushButton *downloadBtn = new QPushButton(title);
     downloadBtn->setProperty("addr",addr);
- //   downloadBtn->setProperty("data",data);
+    downloadBtn->setProperty("data",data);
     downloadBtn->setStyleSheet("background-color:green");
-    connect(downloadBtn,&QPushButton::clicked,ConfigDialog::getInstance(),&ConfigDialog::on_pushButton_clicked);
+    connect(downloadBtn,&QPushButton::clicked,ConfigDialog::getInstance(),&ConfigDialog::on_downloadButton_clicked);
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->addWidget(downloadBtn);
     hLayout->addStretch();
