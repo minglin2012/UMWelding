@@ -41,9 +41,21 @@
 #ifndef CONFIGDIALOG_H
 #define CONFIGDIALOG_H
 
+
+#ifdef WIN32
+#define _WINSOCK2API_
+//#define WIN32_LEAN_AND_MEAN
+#endif
+
 #include <QDialog>
 #include <QComboBox>
-#include <modbus.h>
+#include <QStatusBar>
+#include <QLabel>
+#include <QRadioButton>
+extern "C"
+{
+#include "modbus.h"
+}
 
 QT_BEGIN_NAMESPACE
 class QListWidget;
@@ -64,6 +76,8 @@ public slots:
     void changePage(QListWidgetItem *current, QListWidgetItem *previous);
     void on_downloadButton_clicked();
     void on_downloadGroupButton_clicked();
+    void on_serialButton_clicked();
+    void on_statusTimer_out();
 private:
     void createIcons();
     void addButton(QListWidget *widget,const QString &icon, const QString &text );
@@ -76,6 +90,11 @@ private:
     QStackedWidget *pagesWidget;
 public:
     QComboBox *groupBox;
+    QStatusBar *statusBar;
+    QLabel *statusLabel;
+    QComboBox *serialBox;
+    QRadioButton *serialRatio;
+    QTimer *statusTimer;
 };
 
 #endif

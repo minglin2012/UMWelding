@@ -44,14 +44,23 @@
 #include "pages.h"
 
 ConfigDialog::ConfigDialog()
+    : m_pModbusCtx(NULL)
+    , contentsWidget(NULL)
+    , pagesWidget(NULL)
+    , groupBox(NULL)
+    , statusBar(NULL)
+    , statusLabel(NULL)
+    , serialBox(NULL)
+    , serialRatio(NULL)
+    , statusTimer(NULL)
 {
 }
 
 void ConfigDialog::Initialize()
 {
 
-     setWindowFlags(Qt::FramelessWindowHint);
-    setWindowState(Qt::WindowMaximized);
+//     setWindowFlags(Qt::FramelessWindowHint);
+//    setWindowState(Qt::WindowMaximized);
     setObjectName("ConfigDialog");
      setStyleSheet("#ConfigDialog{border-image:url(:/images/frame.png);}");
 
@@ -88,7 +97,29 @@ void ConfigDialog::Initialize()
      horizontalLayout->addWidget(pagesWidget,1 );
 
     QHBoxLayout *buttonsLayout = new QHBoxLayout;
+    QLabel *msgLabel = new QLabel;
+    statusLabel = msgLabel;
+    msgLabel->setStyleSheet(" QLabel{ color: green }");
+//    msgLabel->setText("Ready :");
+    QStatusBar *status = new QStatusBar;
+    statusBar = status;
+    status->addWidget(msgLabel);
+
+    QRadioButton *serialRadio = new QRadioButton(QStringLiteral("开启端口"));
+    this->serialRatio = serialRadio;
+    QComboBox *serialCombo = new QComboBox;
+    serialBox = serialCombo;
+    serialCombo->addItem("1");
+    serialCombo->addItem("2");
+    serialCombo->addItem("3");
+    connect(serialRadio,&QRadioButton::clicked,this,&ConfigDialog::on_serialButton_clicked);
+
+
+
+    buttonsLayout->addWidget(status);
     buttonsLayout->addStretch(1);
+    buttonsLayout->addWidget(serialRadio);
+    buttonsLayout->addWidget(serialCombo);
     buttonsLayout->addWidget(closeButton);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -99,17 +130,12 @@ void ConfigDialog::Initialize()
 
     setWindowTitle(QStringLiteral("Config Dialog"));
 
-    qDebug()<<"start modbus intialize..."<<endl;
-    m_pModbusCtx = modbus_new_rtu("/dev/ttyUSB0", 115200, 'N', 8, 1);
-    if(NULL == m_pModbusCtx) {
-        qDebug()<<"modbus_new_rtu /dev/ttyUSB1 failed!"<<endl;
-    }
+    serialRadio->click();
 
-    modbus_set_slave(m_pModbusCtx,1);
-    if(-1 == modbus_connect(m_pModbusCtx))
-    {
-        qDebug()<<"modbus_connect failed!"<<endl;
-    }
+    statusTimer = new QTimer(this);
+    connect( statusTimer, SIGNAL(timeout()),this, SLOT(on_statusTimer_out()) );
+    statusTimer->start();
+
 }
 
 void ConfigDialog::addButton(QListWidget *widget,const QString &icon, const QString &text )
@@ -128,7 +154,7 @@ bool ConfigDialog::write(int addr, int nb, const uint16_t *data)
     //modbus_read_registers(m_pModbusCtx,m_nAddr,m_nNumber,m_pDest);
     //10命令
     //modbus_write_registers(m_pModbusCtx,m_nAddr,m_nNumber,m_pSrc);
-
+    if(NULL == m_pModbusCtx) return false;
     return (-1 != modbus_write_registers(m_pModbusCtx,addr,nb,data));
 }
 
@@ -181,13 +207,75 @@ void ConfigDialog::on_downloadButton_clicked()
 
     qDebug()<<"modbus_write_registers:addr["<<(void*)addr<<"],data["<<data<<"]";
     QString text;
-    text += QString("地址[%1H],数据[%2H]" ).arg(QString::number(addr,16),4,QChar('0')).arg(QString::number(data,16),4,QChar('0') );
+    text += QStringLiteral("地址[%1H],数据[%2H]" ).arg(QString::number(addr,16),4,QChar('0')).arg(QString::number(data,16),4,QChar('0') );
     QMessageBox::information(NULL,QStringLiteral("下载信息"),text);
+    bool flag = write(addr,1,&data);
+    if(flag)
+    {
+        statusLabel->setStyleSheet(" QLabel{ color: green }");
+        statusLabel->setText(QStringLiteral("下载成功"));
+    }
+    else
+    {
+        statusLabel->setStyleSheet(" QLabel{ color: red }");
+        statusLabel->setText(QStringLiteral("下载失败"));
+    }
+    statusTimer->start( 3000 ); // 2秒单触发定时器
+
 }
 void ConfigDialog::on_downloadGroupButton_clicked()
 {
     QMessageBox::information(NULL,tr("info"),tr("download group"));
 
+}
+
+void ConfigDialog::on_serialButton_clicked()
+{
+    QRadioButton *btn=(QRadioButton*)sender();
+    if(btn->isChecked())
+    {
+        int index = serialBox->currentIndex();
+#ifdef WIN32
+        QString dev = QString("%1%2").arg(QString("COM")).arg(index+1);
+#else
+        QString dev = QString("%1%2").arg(QString("/dev/ttyUSB")).arg(index+1);
+#endif
+        if(NULL == (m_pModbusCtx = modbus_new_rtu(dev.toStdString().c_str(),38400,'N',8,1)))
+        {
+            btn->setChecked(false);
+            return;
+        }
+        modbus_set_slave(m_pModbusCtx,1);
+        if( -1 == modbus_connect(m_pModbusCtx))
+        {
+            btn->setChecked(false);
+            return;
+        }
+    }
+    else
+    {
+        modbus_close(m_pModbusCtx);
+    }
+    if(NULL != statusTimer)
+    {
+        statusTimer->start();
+    }
+
+}
+
+void ConfigDialog::on_statusTimer_out()
+{
+    statusTimer->stop();
+    if(serialRatio->isChecked())
+    {
+        statusLabel->setStyleSheet(" QLabel{ color: green }");
+        statusLabel->setText(QStringLiteral("就绪:"));
+    }
+    else
+    {
+        statusLabel->setStyleSheet(" QLabel{ color: red }");
+        statusLabel->setText(QStringLiteral("未就绪:"));
+    }
 }
 
 
