@@ -238,7 +238,7 @@ void ConfigDialog::on_serialButton_clicked()
 #ifdef WIN32
         QString dev = QString("%1%2").arg(QString("COM")).arg(index+1);
 #else
-        QString dev = QString("%1%2").arg(QString("/dev/ttyUSB")).arg(index+1);
+        QString dev = QString("%1%2").arg(QString("/dev/ttyUSB")).arg(index);
 #endif
         if(NULL == (m_pModbusCtx = modbus_new_rtu(dev.toStdString().c_str(),38400,'N',8,1)))
         {

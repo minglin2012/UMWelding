@@ -15,11 +15,11 @@ INSTALLS += target
 #LIBS += -L"C:\Users\wang\Documents\GitHub\umwelding\modbus\lib" -lmodbus-5
 #INCLUDEPATH += C:\Users\wang\Documents\GitHub\umwelding\modbus\include
 ##}
-#unix:!macx {
-##LIBS += -L$$PWD/ -lXXXXX
-#CONFIG += link_pkgconfig
-#PKGCONFIG += libmodbus
-#}
+unix:!macx {
+#LIBS += -L$$PWD/ -lXXXXX
+CONFIG += link_pkgconfig
+PKGCONFIG += libmodbus
+}
 
 
 

@@ -1,0 +1,20 @@
+umwelding-0.1.4.1 (linux)
+- 修复上一个版本在linux上的编译错误(找不到libmodbus库)
+
+Wed Apr 12 23:47:48 CST 2017
+umwelding-0.1.4 (windows)
+- 在windows上实现了modbus逻辑通讯，完成多数写寄存器命令
+- 新增了界面元素(statusbar),对发送状态和串口状态进行反馈
+- 新增了串口界面元素，可简易配置串口参数
+
+umwelding-0.1.3 (linux)
+- 增加了程序按钮的功能逻辑，按钮与事件的一一对应
+- 进一步优化界面元素和界面布局
+
+umwelding-0.1.2 (linux)
+- 修复了windows下的字符集问题
+- 调整了程序增体布局，完善了界面元素
+
+umwelding-0.1 （linux)
+- 实现了基本的界面框架
+- 实现了lagrange多项式插值算法，此算法可以在曲线参数的插值中发挥作用。
