@@ -1,3 +1,6 @@
+umwelding-0.1.4.2
+- 增加了串口地址输入框，适应性更好
+
 umwelding-0.1.4.1 (linux)
 - 修复上一个版本在linux上的编译错误(找不到libmodbus库)
 

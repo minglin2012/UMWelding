@@ -95,6 +95,7 @@ public:
     QComboBox *serialBox;
     QRadioButton *serialRatio;
     QTimer *statusTimer;
+    QComboBox *serialDevCombo;
 };
 
 #endif

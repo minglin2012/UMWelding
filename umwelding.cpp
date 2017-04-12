@@ -53,6 +53,7 @@ ConfigDialog::ConfigDialog()
     , serialBox(NULL)
     , serialRatio(NULL)
     , statusTimer(NULL)
+    , serialDevCombo(NULL)
 {
 }
 
@@ -107,18 +108,35 @@ void ConfigDialog::Initialize()
 
     QRadioButton *serialRadio = new QRadioButton(QStringLiteral("开启端口"));
     this->serialRatio = serialRadio;
+
+    QComboBox *serialDevCombo = new QComboBox;
+    serialDevCombo->addItem("COM");
+    serialDevCombo->addItem("/dev/ttyS");
+    serialDevCombo->addItem("/dev/ttyUSB");
+    serialDevCombo->addItem("/dev/pts/");
+    this->serialDevCombo =serialDevCombo;
+
     QComboBox *serialCombo = new QComboBox;
     serialBox = serialCombo;
+    serialCombo->addItem("0");
     serialCombo->addItem("1");
     serialCombo->addItem("2");
     serialCombo->addItem("3");
     connect(serialRadio,&QRadioButton::clicked,this,&ConfigDialog::on_serialButton_clicked);
 
+#ifdef WIN32
+    serialDevCombo->setCurrentIndex(0);
+    serialCombo->setCurrentIndex(0);
+#else
+    serialDevCombo->setCurrentIndex(3);
+    serialCombo->setCurrentIndex(1);
+#endif
 
 
     buttonsLayout->addWidget(status);
     buttonsLayout->addStretch(1);
     buttonsLayout->addWidget(serialRadio);
+    buttonsLayout->addWidget(serialDevCombo);
     buttonsLayout->addWidget(serialCombo);
     buttonsLayout->addWidget(closeButton);
 
@@ -235,11 +253,13 @@ void ConfigDialog::on_serialButton_clicked()
     if(btn->isChecked())
     {
         int index = serialBox->currentIndex();
-#ifdef WIN32
-        QString dev = QString("%1%2").arg(QString("COM")).arg(index+1);
-#else
-        QString dev = QString("%1%2").arg(QString("/dev/ttyUSB")).arg(index);
-#endif
+//#ifdef WIN32
+//        QString dev = QString("%1%2").arg(QString("COM")).arg(index+1);
+//#else
+//        QString dev = QString("%1%2").arg(QString("/dev/ttyUSB")).arg(index);
+//#endif
+        QString dev = QString("%1%2").arg(serialDevCombo->currentText()).arg(index);
+
         if(NULL == (m_pModbusCtx = modbus_new_rtu(dev.toStdString().c_str(),38400,'N',8,1)))
         {
             btn->setChecked(false);
