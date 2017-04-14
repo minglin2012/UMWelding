@@ -42,51 +42,10 @@
 #include "umwelding.h"
 #include "pages.h"
 #include "math.h"
+#include "curveview.h"
 #include <iostream>
 using namespace std;
 
-
-QueryPage::QueryPage(QWidget *parent)
-    : QWidget(parent)
-{
-    QGroupBox *packagesGroup = new QGroupBox(QStringLiteral("Look for packages"));
-
-    QLabel *nameLabel = new QLabel(QStringLiteral("Name:"));
-    QLineEdit *nameEdit = new QLineEdit;
-
-    QLabel *dateLabel = new QLabel(QStringLiteral("Released after:"));
-    QDateTimeEdit *dateEdit = new QDateTimeEdit(QDate::currentDate());
-
-    QCheckBox *releasesCheckBox = new QCheckBox(QStringLiteral("Releases"));
-    QCheckBox *upgradesCheckBox = new QCheckBox(QStringLiteral("Upgrades"));
-
-    QSpinBox *hitsSpinBox = new QSpinBox;
-    hitsSpinBox->setPrefix(QStringLiteral("Return up to "));
-    hitsSpinBox->setSuffix(QStringLiteral(" results"));
-    hitsSpinBox->setSpecialValueText(QStringLiteral("Return only the first result"));
-    hitsSpinBox->setMinimum(1);
-    hitsSpinBox->setMaximum(100);
-    hitsSpinBox->setSingleStep(10);
-
-    QPushButton *startQueryButton = new QPushButton(QStringLiteral("Start query"));
-
-    QGridLayout *packagesLayout = new QGridLayout;
-    packagesLayout->addWidget(nameLabel, 0, 0);
-    packagesLayout->addWidget(nameEdit, 0, 1);
-    packagesLayout->addWidget(dateLabel, 1, 0);
-    packagesLayout->addWidget(dateEdit, 1, 1);
-    packagesLayout->addWidget(releasesCheckBox, 2, 0);
-    packagesLayout->addWidget(upgradesCheckBox, 3, 0);
-    packagesLayout->addWidget(hitsSpinBox, 4, 0, 1, 2);
-    packagesGroup->setLayout(packagesLayout);
-
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(packagesGroup);
-    mainLayout->addSpacing(12);
-    mainLayout->addWidget(startQueryButton);
-    mainLayout->addStretch(1);
-    setLayout(mainLayout);
-}
 
 
 
@@ -96,6 +55,10 @@ GroupPage::GroupPage(bool bEnable, QWidget *parent)
     : QWidget(parent)
     , m_bEnable(bEnable)
 {
+    if(!m_bEnable)
+        setObjectName(QStringLiteral("分组"));
+    else
+        setObjectName(QStringLiteral("设置"));
 
     QGroupBox *paramGroup = new QGroupBox(QStringLiteral("工作参数"));
     QGroupBox *curveGroup = new QGroupBox(QStringLiteral("曲线参数"));
@@ -239,7 +202,6 @@ void GroupPage::addItem(QGridLayout *layout, const QString &title, const QString
 void GroupPage::addItem(QGridLayout *layout, const int * pointsY, int row, int column, int rowSpan, int columnSpan)
 {
     QGraphicsScene *scene = new QGraphicsScene;
-    //scene->addLine(10, 10, 150, 300);
     QPainterPath axispath;
     int WIDTH=200;
     int HEIGHT=200;
@@ -248,24 +210,11 @@ void GroupPage::addItem(QGridLayout *layout, const int * pointsY, int row, int c
     axispath.addRect(0,0,WIDTH,HEIGHT);
      scene->addPath(axispath );
 
-//    QPainterPath curvePath;
-//    curvePath.moveTo(0,HEIGHT-(pointsY[0]*yFactor));
-//    for(int i=1;i<1000;i+=1)
-//    {
-//        curvePath.lineTo(int(i*xFactor),int(HEIGHT-(pointsY[i]*yFactor)));
-//    }
-//    scene->addPath(curvePath);
 
-    QGraphicsView *curveView = new QGraphicsView(scene);
-    curveView->setScene(scene);
-    curveView->setAttribute(Qt::WA_TranslucentBackground,true);
-    QPalette  myPalette;
-    QColor  myColor(100,100,0);
-    myColor.setAlphaF(0.5);
-    myPalette.setBrush(curveView->backgroundRole(),myColor);
-    curveView->setPalette(myPalette);
-    curveView->setStyleSheet("border:0px");//无边框，背景透明
-    curveView->setAutoFillBackground(true);//这个的话就不会了，只有view透明
+    CurveView *curveView = new CurveView;
+    QPoint points[] = {QPoint(0,100),QPoint(100,200),QPoint(200,0),QPoint(300,80),QPoint(500,100),QPoint(600,50),QPoint(700,100),QPoint(800,0),QPoint(999,50)};
+    curveView-> generateY(CurveView::GEN_LAGRANGE_INTER,points,9,1);
+    curveView->draw();
     layout->addWidget(curveView,row,column,rowSpan,columnSpan);
 }
 
@@ -293,7 +242,7 @@ void GroupPage::on_loadButton_clicked()
 WorkPage::WorkPage(QWidget *parent)
     : QWidget(parent)
 {
-
+    setObjectName(QStringLiteral("工作"));
 //    QGroupBox *paramGroup = new QGroupBox(QStringLiteral("工作参数"));
     QGroupBox *paramGroup = new QGroupBox(QString::fromLocal8Bit("工作参数"));
 //    QGroupBox *statusGroup = new QGroupBox(QStringLiteral("实时数据"));
@@ -319,12 +268,11 @@ WorkPage::WorkPage(QWidget *parent)
 //    double params[] = {100,2*3.14/200,0 };
 //    generateY(GEN_SIN,params,3);
 //    addItem(paramLayout,pointsY ,4,1,3,1);
+    CurveView *curveView =new CurveView ;
     QPoint points[] = {QPoint(0,100),QPoint(100,200),QPoint(200,0),QPoint(300,80),QPoint(500,100),QPoint(600,50),QPoint(700,100),QPoint(800,0),QPoint(999,50)};
-//    QPoint points[] = {QPoint(1,50) };
-    generateY(GEN_LAGRANGE_INTER,points,9,8);
-
-     addItem(paramLayout,pointsY ,4,1,3,1);
-
+    curveView-> generateY(CurveView::GEN_LAGRANGE_INTER,points,9,4);
+    curveView->draw();
+    paramLayout->addWidget(curveView,4,1,3,1);
 
     mainLayout->addSpacing(12);
     mainLayout->addWidget(statusGroup);
@@ -348,6 +296,7 @@ void WorkPage::addItem(QGridLayout *layout, const QString &title, const QString 
     QHBoxLayout *hLayout = new QHBoxLayout;
     QLabel *titleLabel = new QLabel(title+QStringLiteral(":"));
     QLineEdit *contentEdit = new QLineEdit;
+    contentEdit->setMinimumWidth(80);
     QLabel *unitLabel = new QLabel(unit);
 
     hLayout->addWidget(titleLabel,1,Qt::AlignRight);
@@ -359,169 +308,18 @@ void WorkPage::addItem(QGridLayout *layout, const QString &title, const QString 
 
 void WorkPage::addItem(QGridLayout *layout, const int * pointsY, int row, int column, int rowSpan, int columnSpan)
 {
-    QGraphicsScene *scene = new QGraphicsScene;
-    //scene->addLine(10, 10, 150, 300);
-    QPainterPath axispath;
-    int WIDTH=200;
-    int HEIGHT=200;
-    double xFactor = WIDTH/1000.0;
-    double yFactor = 1.0;
-    axispath.addRect(0,0,WIDTH,HEIGHT);
-//    scene->addPath(axispath );
-
-    QPainterPath curvePath;
-    curvePath.moveTo(0,HEIGHT-(pointsY[0]*yFactor));
-    for(int i=1;i<1000;i+=1)
-    {
-//        cout<<"line To :"<<i<<":"<<i*xFactor<<","<<HEIGHT-(pointsY[i]*yFactor)<<endl;
-        curvePath.lineTo(int(i*xFactor),int(HEIGHT-(pointsY[i]*yFactor)));
-    }
-    scene->addPath(curvePath);
-
-    QGraphicsView *curveView = new QGraphicsView(scene);
-    curveView->setScene(scene);
-//    curveView->setFixedSize();
-    curveView->setAttribute(Qt::WA_TranslucentBackground,true);
-    QPalette  myPalette;
-    QColor  myColor(100,100,0);
-    myColor.setAlphaF(0.5);
-    myPalette.setBrush(curveView->backgroundRole(),myColor);
-    curveView->setPalette(myPalette);
-    curveView->setStyleSheet("border:0px");//无边框，背景透明
-    curveView->setAutoFillBackground(true);//这个的话就不会了，只有view透明
+    CurveView *curveView = new CurveView;
+    QPoint points[] = {QPoint(0,100),QPoint(100,200),QPoint(200,0),QPoint(300,80),QPoint(500,100),QPoint(600,50),QPoint(700,100),QPoint(800,0),QPoint(999,50)};
+    curveView-> generateY(CurveView::GEN_LAGRANGE_INTER,points,9,2);
+    curveView->draw();
     layout->addWidget(curveView,row,column,rowSpan,columnSpan);
 }
 
 
-bool WorkPage::generateY(EGenAlgorithm algo, double *param, int paramAmount)
-{
-    for(int i=0;i<1000;i++)
-    {
-        switch(algo)
-        {
-        case GEN_POLYNOMINAL:
-        {
-            pointsY[i] = 0;
-            for(int j=0;j<paramAmount;j++)
-                pointsY[i] += param[j]*pow(i,j);
-        }
-            break;
-        case GEN_SIN:
-        {
-            pointsY[i] = param[0]*sin(param[1]*i+param[2]);
-        }
-            break;
-        default:
-            pointsY[i] = i;
-            break;
-        }
-    }
-    return true;
-}
-
-bool WorkPage::generateY(EGenAlgorithm algo, QPoint  *points, int pointAmount, int lagrangeFactor)
-{
-    //lagrangeFactor  拉格朗日插值次数系数，1代表线性插值，2代表抛物线插值
-    //依据lagrange插值多项式 ：
-    //Ln(x) = sigma(j=0,n)(y[i]*l[j](x));sigma表示累加 ，lj称为lagrange插值基函数
-    //l[j](x) = pai(k=0,n)(x-x[j])/(x[j]-x[k]) ；pai表示累乘
-
-    //    QPoint *basePoints = new QPoints[lagrangeFactor];
-    qDebug()<<" pointAmount = "<<pointAmount<<endl;
-    switch (algo)
-    {
-    case GEN_LAGRANGE_INTER:
-    {
-        QPoint *basePoints = NULL;
-        double *baseLagrange = new double[lagrangeFactor];
-
-        if(pointAmount <=0) {return false;}
-        if(pointAmount ==1) {
-            double param[ ]={points[0].y()*1.0};
-            generateY(GEN_POLYNOMINAL,param,sizeof(param));
-            return true;
-        }
-        // 1 <= 插值次数 <= pointAmount-1
-        if(lagrangeFactor>pointAmount-1)
-        {
-            lagrangeFactor = pointAmount-1;
-        }
-        else if(lagrangeFactor < 1)
-        {
-            lagrangeFactor = 1;
-        }
-
-        //依次插值
-        for(int i=0;i<1000;i++)
-        {
-
-            //计算第一个基点x索引，数目等于lagrangeFacotr+1, 例如一次线性插值依赖两个基点。
-            int index = 0;
-
-            //如果第一个点的横坐标已经大于插值点x了，此时是左外插值
-            if(points[0].x() > i)
-            {
-                index=0;
-            }
-            //如果最后一个点的横坐标小于等于插值点x，此时是右外插值
-            else if(points[pointAmount-1].x() <= i)
-            {
-                index = pointAmount - 1 - lagrangeFactor;
-            }
-            //其他情况属于内插值，插值点两边的点尽量平均
-            else
-            {
-                for(int j=0;j<pointAmount-1;j++)
-                {
-                    if(points[j].x()<=i && points[j+1].x() > i)
-                    {
-                        //找到最近点points[j]作为求基点的参考
-                        index =j;
-                        break;
-                    }
-                    index = pointAmount-1;
-                }
-                index = index - (lagrangeFactor )/2;
-                if(index<0) index=0;
-                if(index+lagrangeFactor >pointAmount-1) index= pointAmount-lagrangeFactor-1;
-            }
-            basePoints =&points[index];
-
-            //求n次插值的n+1个基函数值
-            for(int j=0;j<lagrangeFactor+1;j++)
-            {
-                baseLagrange[j] = 1;
-                for(int k=0;k<lagrangeFactor+1;k++)
-                {
-                    if(k!=j)
-                    {
-                        baseLagrange[j] *= 1.0*(i-basePoints[k].x());
-                        baseLagrange[j] /= 1.0*(basePoints[j].x()-basePoints[k].x());
-                    }
-                }
-            }
-
-            //计算插值L(n) = l0*y0+l1*y1+l2*y2+...+ln*yn
-            pointsY[i] = 0;
-            for(int j=0;j<lagrangeFactor+1;j++)
-            {
-                pointsY[i] += basePoints[j].y()*baseLagrange[j];
-            }
-
-//             cout<<"inter pointsY ["<<i<<"]="<<pointsY[i]<<endl;
-        }
-    }
-        break;
-    default :
-        return false;
-    }
-    return true;
-}
-
 DebugPage::DebugPage(QWidget *parent)
     : QWidget(parent)
 {
-
+    setObjectName(QStringLiteral("调试"));
     QGroupBox *cmdGroup = new QGroupBox(QStringLiteral("调试命令"));
     QGroupBox *statusGroup = new QGroupBox(QStringLiteral("实时数据"));
     QGridLayout *mainLayout = new QGridLayout;
@@ -592,20 +390,11 @@ void DebugPage::addItem(QGridLayout *layout, const QString &title, const QString
 CurvePage::CurvePage(QWidget *parent)
     : QWidget(parent)
 {
-
-    QGraphicsScene *scene = new QGraphicsScene(0,0,1000,1000);
-    scene->addRect(0,0,1000,1000);
-    QGraphicsView *curveView = new QGraphicsView;
-    curveView->setScene(scene);
-    curveView->setAttribute(Qt::WA_TranslucentBackground,true);
-    QPalette  myPalette;
-    QColor  myColor(100,100,0);
-    myColor.setAlphaF(0.5);
-    myPalette.setBrush(curveView->backgroundRole(),myColor);
-    curveView->setPalette(myPalette);
-    curveView->setStyleSheet("border:0px");//无边框，背景透明
-    curveView->setAutoFillBackground(true);//这个的话就不会了，只有view透明
-
+    setObjectName(QStringLiteral("曲线"));
+    CurveView *curveView = new CurveView;
+    QPoint points[] = {QPoint(0,100),QPoint(100,200),QPoint(200,0),QPoint(300,80),QPoint(500,100),QPoint(600,50),QPoint(700,100),QPoint(800,0),QPoint(999,50)};
+    curveView-> generateY(CurveView::GEN_LAGRANGE_INTER,points,9,8);
+    curveView->draw();
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(curveView);
 
@@ -632,13 +421,13 @@ CurvePage::CurvePage(QWidget *parent)
 AboutPage::AboutPage(QWidget *parent)
     : QWidget(parent)
 {
-
+    setObjectName(QStringLiteral("关于"));
     QGroupBox *aboutGroup = new QGroupBox(QStringLiteral("关于软件"));
     QVBoxLayout *aboutLayout = new QVBoxLayout;
     QLabel *aboutLabel = new QLabel(QStringLiteral("\n\
-                                       版本：UMWelding-1.0.1 \n\
-                                       公司：暨通信息科技有限公司@ 保留所有权利\n\
-                                       地址：广州市越秀区天河路") );
+            版本：UMWelding-1.0.1 \n\
+            公司：暨通信息科技有限公司@ 保留所有权利\n\
+            地址：广州市越秀区天河路") );
     aboutLayout->addWidget(aboutLabel);
     aboutGroup->setLayout(aboutLayout);
     QVBoxLayout *mainLayout = new QVBoxLayout;

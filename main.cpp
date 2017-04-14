@@ -56,9 +56,8 @@ int main(int argc, char *argv[])
     QFont font = app.font();
     font.setPixelSize(25);
     app.setFont(font);
-    app.setApplicationDisplayName("Qt Example");
+    app.setApplicationDisplayName("UMWelding");
     ConfigDialog *mainwindow = ConfigDialog::getInstance();
     mainwindow->Initialize();
-//    app.setProperty("configdialog",mainwindow);
     return mainwindow->exec();
 }

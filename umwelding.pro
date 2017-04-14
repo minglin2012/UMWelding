@@ -1,10 +1,12 @@
 QT += widgets
 
 HEADERS     = umwelding.h \
-              pages.h
+              pages.h \
+    curveview.h
 SOURCES     = umwelding.cpp \
               main.cpp \
-              pages.cpp
+              pages.cpp \
+    curveview.cpp
 RESOURCES   += umwelding.qrc
 
 # install

@@ -62,8 +62,8 @@ void ConfigDialog::Initialize()
 
 //     setWindowFlags(Qt::FramelessWindowHint);
 //    setWindowState(Qt::WindowMaximized);
-    setObjectName("ConfigDialog");
-     setStyleSheet("#ConfigDialog{border-image:url(:/images/frame.png);}");
+    setObjectName("umwelding");
+     setStyleSheet("#umwelding{border-image:url(:/images/frame.png);}");
 
     contentsWidget = new QListWidget;
     contentsWidget->setViewMode(QListView::IconMode);
@@ -146,7 +146,6 @@ void ConfigDialog::Initialize()
     mainLayout->addLayout(buttonsLayout);
     setLayout(mainLayout);
 
-    setWindowTitle(QStringLiteral("Config Dialog"));
 
     serialRadio->click();
 
@@ -198,6 +197,8 @@ void ConfigDialog::changePage(QListWidgetItem *current, QListWidgetItem *previou
         current = previous;
 
     pagesWidget->setCurrentIndex(contentsWidget->row(current));
+
+    setWindowTitle(pagesWidget->currentWidget()->objectName());
 }
 
 void ConfigDialog::on_downloadButton_clicked()
