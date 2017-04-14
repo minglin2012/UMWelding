@@ -2,10 +2,17 @@
 #include <QGraphicsItem>
 #include <cmath>
 #include <QDebug>
+#include <QTime>
+#include <QLabel>
+__int64_t factorial(int  x )
+{
+    return x ? ( factorial(x-1)*x) : 1;
+}
 
 CurveView::CurveView(QWidget *parent) :
     QGraphicsView(parent)
 {
+    viewLayout = new QGridLayout;
 
     setAttribute(Qt::WA_TranslucentBackground,true);
     QPalette  myPalette;
@@ -32,6 +39,30 @@ CurveView::CurveView(QWidget *parent) :
     m_pScene->setForegroundBrush(QBrush(Qt::lightGray, Qt::CrossPattern));
     setScene(m_pScene);
 
+    axisHLayout = new QHBoxLayout;
+    axisVLayout = new QVBoxLayout;
+    QFont font = this->font();
+    font.setPixelSize(8);
+    font.setBold(true);
+    for(int i=0;i<1000;i+=200)
+    {
+        QString str("%1");
+        QLabel *label = new QLabel(str.arg(i));
+        label->setFont(font);
+        axisHLayout->addWidget(label);
+    }
+    double interval=200;
+    for(int i=0;i<5;i++)
+    {
+        QLabel *label = new QLabel(QString::number(800-i*interval,10,0));
+        label->setFont(font);
+        axisVLayout->addWidget(label,0,Qt::AlignBottom);
+    }
+    viewLayout->addLayout(axisVLayout,0,0,1,1);
+    viewLayout->addWidget(new QLabel(""),1,0,1,1);
+    viewLayout->addWidget(this,0,1,1,1);
+    viewLayout->addLayout(axisHLayout,1,1,1,1);
+
 }
 
 void CurveView::addPoint(const QPoint &)
@@ -54,6 +85,9 @@ void CurveView::addPoints(const QList<QPoint> &)
 
 bool CurveView::generateY(EGenAlgorithm algo, double *param, int paramAmount)
 {
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
+    pointsYmax = -1e10;
+    pointsYmin = 1e10;
     for(int i=0;i<1000;i++)
     {
         switch(algo)
@@ -70,15 +104,74 @@ bool CurveView::generateY(EGenAlgorithm algo, double *param, int paramAmount)
             pointsY[i] = param[0]*sin(param[1]*i+param[2]);
         }
             break;
+        case GEN_BINOMIAL_DISTRIBUTION:
+        {
+            //P(ξ=K) = C(n,k) * p^k * (1-p)^(n-k), 其中C(n, k) = n!/(k! * (n-k)!)
+            //A(ξ=K) = C(n,k)
+            pointsY[i] =0;
+            int k=i;
+            int n=param[0]+0.5;
+            double p=param[1];
+            Q_ASSERT(n>1);
+            Q_ASSERT(p<1 && p>0);
+            Q_ASSERT(paramAmount==2);
+
+            if(k<=n)
+            {
+                double c_n_k=1.0;
+                for(int j=k+1;j<=n;j++)
+                {
+                    c_n_k *= j*1.0/(j-k);
+                }
+                pointsY[i] =  c_n_k * pow(p,k) *pow(1-p,n-k)  ;
+            }
+
+        }
+            break;
+        case GEN_POISSON_DISTRIBUTION:
+        {
+            //P(X=k) = pow(λ,k)*exp(-λ)/k!,k=0,1,2,...
+            double lamda = param[0];
+
+            double poisson=1.0;
+            poisson *= exp(-lamda);
+            for(int j=1;j<i;j++)
+            {
+                poisson *=lamda/j;
+            }
+            pointsY[i] = poisson;
+        }
+            break;
+        case GEN_NORMAL_DISTRIBUTION:
+        {
+            //P(X=k) =
+        }
+            break;
+        case GEN_RANDOM:
+        {
+            Q_ASSERT(paramAmount==3);
+            QList<QPointF> listPoints;
+
+            for(int i=0;i+param[2]<1000;i+=param[2])
+            {
+                listPoints.append(QPointF(i,qrand()%(int)(2*param[1])+param[0]-param[1]));
+            }
+            listPoints.append(QPointF(999,qrand()%(int)(2*param[1])+param[0]-param[1]));
+            return generateY(GEN_POLYNOMINAL,listPoints,1);
+        }
+            break;
         default:
             pointsY[i] = i;
             break;
         }
+        pointsYmax = qMax(pointsYmax,pointsY[i]);
+        pointsYmin = qMin(pointsYmin,pointsY[i]);
     }
+    qDebug()<<"max="<<pointsYmax<<",min="<<pointsYmin;
     return true;
 }
 
-bool CurveView::generateY(EGenAlgorithm algo, QPoint  *points, int pointAmount, int lagrangeFactor)
+bool CurveView::generateY(EGenAlgorithm algo, QPointF  *points, int pointAmount, int lagrangeFactor)
 {
     //lagrangeFactor  拉格朗日插值次数系数，1代表线性插值，2代表抛物线插值
     //依据lagrange插值多项式 ：
@@ -87,11 +180,13 @@ bool CurveView::generateY(EGenAlgorithm algo, QPoint  *points, int pointAmount, 
 
     //    QPoint *basePoints = new QPoints[lagrangeFactor];
     qDebug()<<" pointAmount = "<<pointAmount<<endl;
+    pointsYmax = -1e100;
+    pointsYmin = 1e100;
     switch (algo)
     {
     case GEN_LAGRANGE_INTER:
     {
-        QPoint *basePoints = NULL;
+        QPointF *basePoints = NULL;
         double *baseLagrange = new double[lagrangeFactor];
 
         if(pointAmount <=0) {return false;}
@@ -166,9 +261,11 @@ bool CurveView::generateY(EGenAlgorithm algo, QPoint  *points, int pointAmount, 
             {
                 pointsY[i] += basePoints[j].y()*baseLagrange[j];
             }
+            pointsYmax = qMax(pointsYmax,pointsY[i]);
+            pointsYmin = qMin(pointsYmin,pointsY[i]);
 
-//             cout<<"inter pointsY ["<<i<<"]="<<pointsY[i]<<endl;
         }
+        qDebug()<<"*********"<<pointsYmax<<","<<pointsYmin;
     }
         break;
     default :
@@ -176,9 +273,30 @@ bool CurveView::generateY(EGenAlgorithm algo, QPoint  *points, int pointAmount, 
     }
     return true;
 }
+
+bool CurveView::generateY(EGenAlgorithm algo, const QList<QPointF> &pointList, int lagrangeFactor)
+{
+    QPointF *points = new QPointF[pointList.size()];
+    int i=0;
+    for(QList<QPointF>::const_iterator iter=pointList.begin();iter!=pointList.end();++iter,++i)
+    {
+        points[i] = *iter;
+    }
+    return generateY(GEN_LAGRANGE_INTER,points,pointList.size(),lagrangeFactor);
+}
+
+void CurveView::readArray(const unsigned short *addr,int len)
+{
+    Q_ASSERT(len<=1000);
+    for(int i=0;i<len;i++)
+    {
+        pointsY[i] = addr[i];
+    }
+}
+
 void CurveView::draw()
 {
-
+    //qDebug()<<"factorial(5)="<<factorial(100);
     //    QPoint points[] = {QPoint(0,100),QPoint(100,200),QPoint(200,0),QPoint(300,80),QPoint(500,100),QPoint(600,50),QPoint(700,100),QPoint(800,0),QPoint(999,50)};
     //    QPoint points[] = {QPoint(1,50) };
     //    generateY(GEN_LAGRANGE_INTER,points,9,8);
@@ -189,16 +307,49 @@ void CurveView::draw()
 //          cout<<"line To :"<<i<<":"<<i*xFactor<<","<<HEIGHT-(pointsY[i]*yFactor)<<endl;
 //        curvePath.lineTo(int(i*xFactor),int(HEIGHT-(pointsY[i]*yFactor)));
 //    }
+    qDebug()<<"DRAW["<<this<<"]";
     int WIDTH=200;
     int HEIGHT=200;
-    double xFactor = WIDTH/1000.0;
-    double yFactor = 1.0;
-    m_path.moveTo(0,HEIGHT-(pointsY[0]*yFactor));
-        for(int i=1;i<1000;i+=1)
-        {
-            qDebug()<<"line To :"<<i<<":"<<i*xFactor<<","<<HEIGHT-(pointsY[i]*yFactor)<<endl;
-            m_path.lineTo(int(i*xFactor),int(HEIGHT-(pointsY[i]*yFactor)));
-        }
-        m_pScene->addPath(m_path);
+    WIDTH=rect().width();
+    HEIGHT=rect().height();
+    double xFactor = WIDTH/1000.0 ;
+    double yFactor = HEIGHT/(pointsYmax-pointsYmin);
+
+    QRect rr = rect();
+    rr.moveTop(HEIGHT-pointsYmax*yFactor);
+    setSceneRect(rr);
+    QPainterPath path;
+    path.moveTo(0,HEIGHT-(pointsY[0]*yFactor));
+    for(int i=1;i<1000;i+=1)
+    {
+        //qDebug()<<"line To :"<<i<<":"<<i*xFactor<<","<<HEIGHT-(pointsY[i]*yFactor)<<endl;
+        path.lineTo(int(i*xFactor),int(HEIGHT-(pointsY[i]*yFactor)));
+    }
+    m_pScene->clear();
+    m_pScene->addPath(path);
+    updateAxisVLayout(pointsYmin,pointsYmax);
 }
 
+
+void CurveView::resizeEvent(QResizeEvent *event)
+{
+    QWidget::resizeEvent(event) ;
+    draw();
+}
+
+
+
+void CurveView::updateAxisVLayout(double min,double max)
+{
+    double interval = (max-min)/5;
+    for (int cc = axisVLayout->count()-1; cc >= 0; --cc)//4,3,2,1,0
+       {
+           QLayoutItem *it = axisVLayout->layout()->itemAt(cc);
+           QLabel *label = qobject_cast<QLabel *>(it->widget());
+           if (label != 0)
+           {
+               //doing something for orderHistory
+               label->setText(QString::number(max - (cc+1)*interval,10,2));
+           }
+       }
+}

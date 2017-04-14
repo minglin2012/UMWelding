@@ -61,7 +61,7 @@ void ConfigDialog::Initialize()
 {
 
 //     setWindowFlags(Qt::FramelessWindowHint);
-//    setWindowState(Qt::WindowMaximized);
+    setWindowState(Qt::WindowMaximized);
     setObjectName("umwelding");
      setStyleSheet("#umwelding{border-image:url(:/images/frame.png);}");
 
@@ -175,6 +175,12 @@ bool ConfigDialog::write(int addr, int nb, const uint16_t *data)
     return (-1 != modbus_write_registers(m_pModbusCtx,addr,nb,data));
 }
 
+bool ConfigDialog::read(int addr, int nb, uint16_t *dest)
+{
+    if(NULL == m_pModbusCtx) return false;
+    return (-1 != modbus_read_registers(m_pModbusCtx,addr,nb,dest));
+}
+
 
 void ConfigDialog::createIcons()
 {
@@ -242,6 +248,75 @@ void ConfigDialog::on_downloadButton_clicked()
     statusTimer->start( 3000 ); // 2秒单触发定时器
 
 }
+void ConfigDialog::on_uploadButton_clicked()
+{
+    QPushButton *btn=(QPushButton*)sender();
+    QVariant var_addr[5];
+    QVariant var_check[5];
+    var_addr[0] = btn->property("addr1");
+    var_addr[1] = btn->property("addr2");
+    var_addr[2] = btn->property("addr3");
+    var_addr[3] = btn->property("addr4");
+    var_addr[4] = btn->property("addr5");
+    var_check[0] = btn->property("check1");
+    var_check[1] = btn->property("check2");
+    var_check[2] = btn->property("check3");
+    var_check[3] = btn->property("check4");
+    var_check[4] = btn->property("check5");
+
+
+//    if(!var_addr.isValid()) { return ;}
+    int addr[5];
+    addr[0] = var_addr[0].toInt();
+    addr[1] = var_addr[1].toInt();
+    addr[2] = var_addr[2].toInt();
+    addr[3] = var_addr[3].toInt();
+    addr[4] = var_addr[4].toInt();
+
+
+    for(int i=0;i<5;i++)
+    {
+        if(var_check[i].value<QCheckBox*>()->isChecked())
+        {
+            int j;
+            for(j=0;j+50<1024;j+=50)
+            {
+                if(!read(addr[i]+j,50,&registerAddr[i][j]))
+                {
+                    QString text;
+                    text += QStringLiteral("地址[%1H],长度[%2H]" ).arg(QString::number(addr[i]+j,16),4,QChar('0')).arg(QString::number(50,16),4,QChar('0') );
+                    QMessageBox::information(NULL,QStringLiteral("下载信息"),text);
+                    continue;
+                    return ;
+                }
+            }
+            if(!read(addr[i]+j,1024-j,&registerAddr[i][j]))
+            {
+                QString text;
+                text += QStringLiteral("地址[%1H],长度[%2H]" ).arg(QString::number(addr[i]+j,16),4,QChar('0')).arg(QString::number(1024-j,16),4,QChar('0') );
+                QMessageBox::information(NULL,QStringLiteral("下载信息"),text);
+                return ;
+            }
+        }
+    }
+
+//    qDebug()<<"modbus_write_registers:addr["<<(void*)addr<<"],data["<<dstdata<<"],len["<<len;
+//    QMessageBox::information(NULL,QStringLiteral("下载信息"),text);
+
+//    if(flag)
+//    {
+//        statusLabel->setStyleSheet(" QLabel{ color: green }");
+//        statusLabel->setText(QStringLiteral("下载成功"));
+//    }
+//    else
+//    {
+//        statusLabel->setStyleSheet(" QLabel{ color: red }");
+//        statusLabel->setText(QStringLiteral("下载失败"));
+//    }
+    statusTimer->start( 3000 ); // 2秒单触发定时器
+}
+
+
 void ConfigDialog::on_downloadGroupButton_clicked()
 {
     QMessageBox::information(NULL,tr("info"),tr("download group"));

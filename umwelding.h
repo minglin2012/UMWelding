@@ -75,6 +75,9 @@ public:
 public slots:
     void changePage(QListWidgetItem *current, QListWidgetItem *previous);
     void on_downloadButton_clicked();
+    void on_uploadButton_clicked();
+
+
     void on_downloadGroupButton_clicked();
     void on_serialButton_clicked();
     void on_statusTimer_out();
@@ -83,11 +86,13 @@ private:
     void addButton(QListWidget *widget,const QString &icon, const QString &text );
 
     bool write(int addr, int nb, const uint16_t *data);
+    bool read(int addr, int nb, uint16_t *data);
 private:
     modbus_t *m_pModbusCtx;
 
     QListWidget *contentsWidget;
     QStackedWidget *pagesWidget;
+    unsigned short registerAddr[5][1024];
 public:
     QComboBox *groupBox;
     QStatusBar *statusBar;

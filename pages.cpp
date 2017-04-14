@@ -126,8 +126,8 @@ GroupPage::GroupPage(bool bEnable, QWidget *parent)
 //    double params[] = {100,2*3.14/200,0 };
 //    generateY(GEN_SIN,params,3);
 //    addItem(paramLayout,pointsY ,4,1,3,1);
-//    QPoint points[] = {QPoint(0,100),QPoint(100,200),QPoint(200,0),QPoint(300,80),QPoint(500,100),QPoint(600,50),QPoint(700,100),QPoint(800,0),QPoint(999,50)};
-//    QPoint points[] = {QPoint(1,50) };
+//    QPointF points[] = {QPointF(0,100),QPointF(100,200),QPointF(200,0),QPointF(300,80),QPointF(500,100),QPointF(600,50),QPointF(700,100),QPointF(800,0),QPointF(999,50)};
+//    QPointF points[] = {QPointF(1,50) };
 //    generateY(GEN_LAGRANGE_INTER,points,9,8);
 
 
@@ -212,10 +212,11 @@ void GroupPage::addItem(QGridLayout *layout, const int * pointsY, int row, int c
 
 
     CurveView *curveView = new CurveView;
-    QPoint points[] = {QPoint(0,100),QPoint(100,200),QPoint(200,0),QPoint(300,80),QPoint(500,100),QPoint(600,50),QPoint(700,100),QPoint(800,0),QPoint(999,50)};
-    curveView-> generateY(CurveView::GEN_LAGRANGE_INTER,points,9,1);
-    curveView->draw();
-    layout->addWidget(curveView,row,column,rowSpan,columnSpan);
+    QPointF points[] = {QPointF(0,100),QPointF(100,200),QPointF(200,0),QPointF(300,80),QPointF(500,100),QPointF(600,50),QPointF(700,100),QPointF(800,0),QPointF(999,50)};
+    curveView-> generateY(CurveView::GEN_LAGRANGE_INTER,points,9,6);
+//    curveView->draw();
+//    layout->addWidget(curveView,row,column,rowSpan,columnSpan);
+    layout->addLayout(curveView->getLayout(),row,column,rowSpan,columnSpan);
 }
 
 void GroupPage::on_saveButton_clicked()
@@ -269,11 +270,11 @@ WorkPage::WorkPage(QWidget *parent)
 //    generateY(GEN_SIN,params,3);
 //    addItem(paramLayout,pointsY ,4,1,3,1);
     CurveView *curveView =new CurveView ;
-    QPoint points[] = {QPoint(0,100),QPoint(100,200),QPoint(200,0),QPoint(300,80),QPoint(500,100),QPoint(600,50),QPoint(700,100),QPoint(800,0),QPoint(999,50)};
+    QPointF points[] = {QPointF(0,100),QPointF(100,200),QPointF(200,0),QPointF(300,80),QPointF(500,100),QPointF(600,50),QPointF(700,100),QPointF(800,0),QPointF(999,50)};
     curveView-> generateY(CurveView::GEN_LAGRANGE_INTER,points,9,4);
-    curveView->draw();
-    paramLayout->addWidget(curveView,4,1,3,1);
-
+//    curveView->draw();
+//    paramLayout->addWidget(curveView,4,1,3,1);
+    paramLayout->addLayout(curveView->getLayout(),4,1,3,1);
     mainLayout->addSpacing(12);
     mainLayout->addWidget(statusGroup);
     QGridLayout *statusLayout = new QGridLayout;
@@ -309,10 +310,11 @@ void WorkPage::addItem(QGridLayout *layout, const QString &title, const QString 
 void WorkPage::addItem(QGridLayout *layout, const int * pointsY, int row, int column, int rowSpan, int columnSpan)
 {
     CurveView *curveView = new CurveView;
-    QPoint points[] = {QPoint(0,100),QPoint(100,200),QPoint(200,0),QPoint(300,80),QPoint(500,100),QPoint(600,50),QPoint(700,100),QPoint(800,0),QPoint(999,50)};
+    QPointF points[] = {QPointF(0,100),QPointF(100,200),QPointF(200,0),QPointF(300,80),QPointF(500,100),QPointF(600,50),QPointF(700,100),QPointF(800,0),QPointF(999,50)};
     curveView-> generateY(CurveView::GEN_LAGRANGE_INTER,points,9,2);
-    curveView->draw();
-    layout->addWidget(curveView,row,column,rowSpan,columnSpan);
+//    curveView->draw();
+//    layout->addWidget(curveView,row,column,rowSpan,columnSpan);
+    layout->addLayout(curveView->getLayout(),row,column,rowSpan,columnSpan);
 }
 
 
@@ -387,27 +389,62 @@ void DebugPage::addItem(QGridLayout *layout, const QString &title, const QString
 }
 
 
+
 CurvePage::CurvePage(QWidget *parent)
     : QWidget(parent)
 {
     setObjectName(QStringLiteral("曲线"));
     CurveView *curveView = new CurveView;
-    QPoint points[] = {QPoint(0,100),QPoint(100,200),QPoint(200,0),QPoint(300,80),QPoint(500,100),QPoint(600,50),QPoint(700,100),QPoint(800,0),QPoint(999,50)};
-    curveView-> generateY(CurveView::GEN_LAGRANGE_INTER,points,9,8);
-    curveView->draw();
+//    QPointF points[] = {QPointF(0,100),QPointF(100,200),QPointF(200,0),QPointF(300,80),QPointF(500,100),QPointF(600,50),QPointF(700,100),QPointF(800,0),QPointF(999,50)};
+//    curveView-> generateY(CurveView::GEN_LAGRANGE_INTER,points,9,8);
+//    double param[] = {1000,0.5};
+//    curveView->generateY(CurveView::GEN_BINOMIAL_DISTRIBUTION,param,2);
+
+    double param[] = {100};
+    curveView->generateY(CurveView::GEN_POISSON_DISTRIBUTION,param,1);
+//    double param[] = {100,30,20};
+//    curveView->generateY(CurveView::GEN_RANDOM,param,3);
+
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(curveView);
+    //mainLayout->addWidget(curveView);
+    mainLayout->addLayout(curveView->getLayout());
 
     QHBoxLayout *hLayout = new QHBoxLayout;
-    hLayout->addWidget(new QPushButton(QStringLiteral("振幅")));
-    hLayout->addWidget(new QPushButton(QStringLiteral("相位")));
-    hLayout->addWidget(new QPushButton(QStringLiteral("电压")));
-    hLayout->addWidget(new QPushButton(QStringLiteral("功率")));
-    hLayout->addWidget(new QPushButton(QStringLiteral("频率")));
+//    hLayout->addWidget(new QPushButton(QStringLiteral("振幅")));
+//    hLayout->addWidget(new QPushButton(QStringLiteral("相位")));
+//    hLayout->addWidget(new QPushButton(QStringLiteral("电压")));
+//    hLayout->addWidget(new QPushButton(QStringLiteral("功率")));
+//    hLayout->addWidget(new QPushButton(QStringLiteral("频率")));
+
+    QCheckBox *checkBox1 = new QCheckBox(QStringLiteral("振幅"));
+    QCheckBox *checkBox2 = new QCheckBox(QStringLiteral("相位"));
+    QCheckBox *checkBox3 = new QCheckBox(QStringLiteral("电压"));
+    QCheckBox *checkBox4 = new QCheckBox(QStringLiteral("功率"));
+    QCheckBox *checkBox5 = new QCheckBox(QStringLiteral("频率"));
+
+
+    hLayout->addWidget(checkBox1);
+    hLayout->addWidget(checkBox2);
+    hLayout->addWidget(checkBox3);
+    hLayout->addWidget(checkBox4);
+    hLayout->addWidget(checkBox5);
 
 
     QIcon icon = QApplication::style()->standardIcon(QStyle::SP_DesktopIcon);
     QPushButton *btnUpload = new QPushButton(QStringLiteral("上传数据"));
+    btnUpload->setProperty("addr1",0x1000);//1024个字，每次最多读50个字，最少需要读21次
+    btnUpload->setProperty("addr2",0x1400);
+    btnUpload->setProperty("addr3",0x1800);
+    btnUpload->setProperty("addr4",0x1C00);
+    btnUpload->setProperty("addr5",0x2000);
+
+    btnUpload->setProperty("check1",QVariant::fromValue(checkBox1));//1024个字，每次最多读50个字，最少需要读21次
+    btnUpload->setProperty("check2",QVariant::fromValue(checkBox2));
+    btnUpload->setProperty("check3",QVariant::fromValue(checkBox3));
+    btnUpload->setProperty("check4",QVariant::fromValue(checkBox4));
+    btnUpload->setProperty("check5",QVariant::fromValue(checkBox5));
+
+    connect(btnUpload,&QPushButton::clicked,ConfigDialog::getInstance(),&ConfigDialog::on_uploadButton_clicked);
     btnUpload->setStyleSheet("background-color:green");
     hLayout->addWidget(btnUpload);
 
