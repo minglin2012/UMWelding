@@ -35,6 +35,9 @@ public:
     bool generateY(EGenAlgorithm algo, QPointF  *points,int pointAmount, int lagrangeFactor=1);
     bool generateY(EGenAlgorithm algo, const QList<QPointF> &points, int lagrangeFactor=1);
 
+    void getData(QList<double> &data);
+    void applyData(const QList<double> &data);
+
     void draw();
     void resizeEvent(QResizeEvent *event);
     QGridLayout* getLayout(){return viewLayout;}

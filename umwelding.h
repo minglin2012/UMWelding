@@ -52,6 +52,9 @@
 #include <QStatusBar>
 #include <QLabel>
 #include <QRadioButton>
+#include <QString>
+#include <QList>
+#include "umweldingparams.h"
 extern "C"
 {
 #include "modbus.h"
@@ -81,26 +84,37 @@ public slots:
     void on_downloadGroupButton_clicked();
     void on_serialButton_clicked();
     void on_statusTimer_out();
+    bool addGroup(const QString &name, const QList<quint32> &value, const QList<double> &data);
+    bool readParamList();
+    bool writeParamList();
+    void updatePages();
 private:
     void createIcons();
     void addButton(QListWidget *widget,const QString &icon, const QString &text );
 
     bool write(int addr, int nb, const uint16_t *data);
     bool read(int addr, int nb, uint16_t *data);
+
+
 private:
     modbus_t *m_pModbusCtx;
 
     QListWidget *contentsWidget;
     QStackedWidget *pagesWidget;
-    unsigned short registerAddr[5][1024];
+
+    quint16 registerAddr[5][1024];
+
 public:
-    QComboBox *groupBox;
+//    QList<QList<quint16> > paramsList;
+    QComboBox *m_cboSetGroups;
+    QComboBox *m_cboGroupGroups;
     QStatusBar *statusBar;
     QLabel *statusLabel;
     QComboBox *serialBox;
     QRadioButton *serialRatio;
     QTimer *statusTimer;
     QComboBox *serialDevCombo;
+    QList<UmweldingParams> umweldingParamList;
 };
 
 #endif

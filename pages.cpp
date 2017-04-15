@@ -61,6 +61,7 @@ GroupPage::GroupPage(bool bEnable, QWidget *parent)
         setObjectName(QStringLiteral("设置"));
 
     QGroupBox *paramGroup = new QGroupBox(QStringLiteral("工作参数"));
+//    paramGroup->hide();
     QGroupBox *curveGroup = new QGroupBox(QStringLiteral("曲线参数"));
     QGridLayout *mainLayout = new QGridLayout;
     mainLayout->addWidget(paramGroup,0,0);
@@ -68,6 +69,12 @@ GroupPage::GroupPage(bool bEnable, QWidget *parent)
     mainLayout->setSpacing(20);
     QGridLayout *paramLayout = new QGridLayout;
     paramGroup->setLayout(paramLayout);
+
+    QPushButton *btnLoadGroup = new QPushButton(QStringLiteral("读取"));
+    QPushButton *btnSaveGroup = new QPushButton(QStringLiteral("保存"));
+    QPushButton *btnDeleteGroup = new QPushButton(QStringLiteral("删除"));
+    m_btnLoadGroup = btnLoadGroup;
+    m_btnSaveGroup = btnSaveGroup;
 
     addItem(paramLayout,QStringLiteral("下降时间"),QStringLiteral("ms"),QStringLiteral("20"),0x256E,0,0);
     addItem(paramLayout,QStringLiteral("上升时间"),QStringLiteral("ms"),QStringLiteral("100"),0x2570,1,0);
@@ -87,8 +94,9 @@ GroupPage::GroupPage(bool bEnable, QWidget *parent)
 
 
     QHBoxLayout *hLayout = new QHBoxLayout;
-    QPushButton *btnLoadGroup = new QPushButton(QStringLiteral("读取"));
-    QPushButton *btnSaveGroup = new QPushButton(QStringLiteral("保存"));
+//    QPushButton *btnLoadGroup = new QPushButton(QStringLiteral("读取"));
+//    QPushButton *btnSaveGroup = new QPushButton(QStringLiteral("保存"));
+    QPushButton *btnCurve = new QPushButton(QStringLiteral("曲线参数"));
 
     QLabel *labelGroup = new QLabel(QStringLiteral("工作组号:"));
 //    QLineEdit *editGroup = new QLineEdit;
@@ -97,42 +105,36 @@ GroupPage::GroupPage(bool bEnable, QWidget *parent)
     btnDownloadGroup->setStyleSheet("background-color:green");
 
     hLayout->addStretch();
-    if(!bEnable)
-    {
-        hLayout->addWidget(btnLoadGroup);
-        connect(btnLoadGroup,&QPushButton::clicked,this,&GroupPage::on_loadButton_clicked);
-    }
-    else
+    hLayout->addWidget(labelGroup);
+    hLayout->addWidget(comboGroup);
+
+    hLayout->addWidget(btnLoadGroup);
+    connect(btnLoadGroup,&QPushButton::clicked,this,&GroupPage::on_loadButton_clicked);
+    if(bEnable)
     {
         hLayout->addWidget(btnSaveGroup);
         connect(btnSaveGroup,&QPushButton::clicked,this,&GroupPage::on_saveButton_clicked);
+        hLayout->addWidget(btnDeleteGroup);
+        connect(btnDeleteGroup,&QPushButton::clicked,this,&GroupPage::on_deleteButton_clicked);
+        hLayout->addWidget(btnCurve);
+        connect(btnCurve,&QPushButton::clicked,this,&GroupPage::on_curveButton_clicked);
+
     }
-    if(!bEnable)
-    {
-        hLayout->addWidget(labelGroup);
-        hLayout->addWidget(comboGroup);
-        ConfigDialog::getInstance()->groupBox = comboGroup;
-        hLayout->addWidget(btnDownloadGroup);
-        connect(btnDownloadGroup,&QPushButton::clicked,ConfigDialog::getInstance(),&ConfigDialog::on_downloadGroupButton_clicked);
-    }
+    if(bEnable)
+        ConfigDialog::getInstance()->m_cboSetGroups = comboGroup;
+    else
+        ConfigDialog::getInstance()->m_cboGroupGroups = comboGroup;
+
+    btnLoadGroup->setProperty("combobox",QVariant::fromValue(comboGroup));
+    btnSaveGroup->setProperty("combobox",QVariant::fromValue(comboGroup));
+
+    hLayout->addWidget(btnDownloadGroup);
+    connect(btnDownloadGroup,&QPushButton::clicked,ConfigDialog::getInstance(),&ConfigDialog::on_downloadGroupButton_clicked);
+
     hLayout->addStretch();
     paramLayout->addLayout(hLayout,5,0,1,2);
     paramLayout->setRowStretch(5,1);
- //   hLayout->addStretch();
 
-//    double params[ ] = {20,1};
-//    generateY(GEN_POLYNOMINAL,params,2);
-
-//    double params[] = {100,2*3.14/200,0 };
-//    generateY(GEN_SIN,params,3);
-//    addItem(paramLayout,pointsY ,4,1,3,1);
-//    QPointF points[] = {QPointF(0,100),QPointF(100,200),QPointF(200,0),QPointF(300,80),QPointF(500,100),QPointF(600,50),QPointF(700,100),QPointF(800,0),QPointF(999,50)};
-//    QPointF points[] = {QPointF(1,50) };
-//    generateY(GEN_LAGRANGE_INTER,points,9,8);
-
-
-
-//    mainLayout->addSpacing(12);
     mainLayout->addWidget(curveGroup,0,1);
     mainLayout->setColumnStretch(1,1);
 
@@ -159,6 +161,13 @@ void GroupPage::addItem(QGridLayout *layout, const QString &title, const QString
     downloadBtn->setStyleSheet("background-color:green");
     downloadBtn->setProperty("addr",addr);
     downloadBtn->setProperty("lineedit",QVariant::fromValue(contentEdit))  ;
+
+    QString str = tr("lineedit%1_%2").arg(row).arg(column);
+
+    qDebug()<<"register:"<<str;
+    m_btnLoadGroup->setProperty(str.toStdString().c_str(),QVariant::fromValue(contentEdit ));
+    m_btnSaveGroup->setProperty(str.toStdString().c_str(),QVariant::fromValue(contentEdit ));
+
     if(!m_bEnable)
     {
         downloadBtn->hide();
@@ -185,6 +194,12 @@ void GroupPage::addItem(QGridLayout *layout, const QString &title, const QString
     downloadBtn->setStyleSheet("background-color:green");
     downloadBtn->setProperty("addr",addr);
     downloadBtn->setProperty("combobox",QVariant::fromValue(contentCbb))  ;
+
+
+    QString str = tr("combobox%1_%2").arg(row).arg(column);
+    qDebug()<<"register:"<<str;
+    m_btnLoadGroup->setProperty(str.toStdString().c_str(),QVariant::fromValue(contentCbb));
+    m_btnSaveGroup->setProperty(str.toStdString().c_str(),QVariant::fromValue(contentCbb));
     if(!m_bEnable)
     {
         downloadBtn->hide();
@@ -212,31 +227,99 @@ void GroupPage::addItem(QGridLayout *layout, const int * pointsY, int row, int c
 
 
     CurveView *curveView = new CurveView;
+    m_curveView = curveView;
     QPointF points[] = {QPointF(0,100),QPointF(100,200),QPointF(200,0),QPointF(300,80),QPointF(500,100),QPointF(600,50),QPointF(700,100),QPointF(800,0),QPointF(999,50)};
-    curveView-> generateY(CurveView::GEN_LAGRANGE_INTER,points,9,6);
-//    curveView->draw();
-//    layout->addWidget(curveView,row,column,rowSpan,columnSpan);
+//    curveView-> generateY(CurveView::GEN_LAGRANGE_INTER,points,9,6);
     layout->addLayout(curveView->getLayout(),row,column,rowSpan,columnSpan);
 }
 
 void GroupPage::on_saveButton_clicked()
 {
     QMessageBox::information(NULL,tr("info"),tr("save group"));
-
+    QPushButton *pBtn = (QPushButton*)sender();
     bool ok;
     QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
                                          tr("User name:"), QLineEdit::Normal,
                                          QDir::home().dirName(), &ok);
-    if (ok && !text.isEmpty())
+    if (!ok || text.isEmpty())  return ;
+    QList<quint32> value;
+    //先纵向，再横向
+    for(int j=0;j<2;j++)
     {
-        ConfigDialog::getInstance()->groupBox->addItem(text );
+        for(int i=0;i<5;i++)
+        {
+            QString str1 = tr("lineedit%1_%2").arg(i).arg(j);
+            QVariant var1 = pBtn->property(str1.toStdString().c_str());
+            QString str2 = tr("combobox%1_%2").arg(i).arg(j);
+            QVariant var2 = pBtn->property(str2.toStdString().c_str());
+            Q_ASSERT(var1.isValid() || var2.isValid());
+            int vv;
+            if(var1.isValid()){
+                vv = var1.value<QLineEdit*>()->text().toInt();
+                qDebug()<<"save("<<i<<","<<j<<") ="<<str1<<":"<<value ;
+            }
+            else{
+                vv = var2.value<QComboBox*>()->currentIndex();
+                qDebug()<<"save("<<i<<","<<j<<") ="<<str2<<":"<<value ;
+            }
+            value.push_back(vv);
+        }
     }
-        //textLabel->setText(text);
+
+    QList<double> data;
+    m_curveView->getData(data);
+
+    ConfigDialog::getInstance()->addGroup(text,value,data);
+    ConfigDialog::getInstance()->writeParamList();
+
+//    ConfigDialog::getInstance()->GroupPage;
+    ConfigDialog::getInstance()->updatePages();
+
 }
 
 void GroupPage::on_loadButton_clicked()
 {
     QMessageBox::information(NULL,tr("info"),tr("load group"));
+    QPushButton *pBtn = (QPushButton*)sender();
+    QVariant var_cbo = pBtn->property("combobox" );
+    Q_ASSERT(var_cbo.isValid()) ;
+    int index = var_cbo.value<QComboBox*>()->currentIndex();
+
+    const UmweldingParams &param = ConfigDialog::getInstance()->umweldingParamList.at(index);
+    qDebug()<<"read group:"<<index<<endl;
+
+    for(int j=0;j<2;j++)
+    {
+        for(int i=0;i<5;i++)
+        {
+            QString str1 = tr("lineedit%1_%2").arg(i).arg(j);
+            QVariant var1 = pBtn->property(str1.toStdString().c_str());
+            QString str2 = tr("combobox%1_%2").arg(i).arg(j);
+            QVariant var2 = pBtn->property(str2.toStdString().c_str());
+            Q_ASSERT(var1.isValid() || var2.isValid());
+            if(var1.isValid()){
+                QString value = tr("%1").arg(param.value[i+j*5]);
+                var1.value<QLineEdit*>()->setText(value);
+                qDebug()<<"load("<<i<<","<<j<<") ="<<str1<<":"<<value ;
+            }
+            else{
+                var2.value<QComboBox*>()->setCurrentIndex(param.value[i+j*5]);
+                qDebug()<<"load("<<i<<","<<j<<") ="<<str2<<":"<<param.value[i+j*5] ;
+            }
+        }
+    }
+    m_curveView->applyData(param.data);
+
+
+}
+
+void GroupPage::on_deleteButton_clicked()
+{
+
+}
+
+void GroupPage::on_curveButton_clicked()
+{
 }
 
 

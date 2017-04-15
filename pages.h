@@ -42,7 +42,7 @@
 #define PAGES_H
 
 #include <QWidget>
-
+#include <curveview.h>
 class ConfigPage : public QWidget
 {
 public:
@@ -80,10 +80,15 @@ public:
 private:
     int pointsY[1000];
     bool m_bEnable;
+    QPushButton *m_btnLoadGroup;
+    QPushButton *m_btnSaveGroup;
+    CurveView *m_curveView;
 
 public slots:
     void on_saveButton_clicked();
     void on_loadButton_clicked();
+    void on_curveButton_clicked();
+    void on_deleteButton_clicked();
 };
 
 

@@ -42,7 +42,7 @@ CurveView::CurveView(QWidget *parent) :
     axisHLayout = new QHBoxLayout;
     axisVLayout = new QVBoxLayout;
     QFont font = this->font();
-    font.setPixelSize(8);
+    font.setPixelSize(12);
     font.setBold(true);
     for(int i=0;i<1000;i+=200)
     {
@@ -349,7 +349,32 @@ void CurveView::updateAxisVLayout(double min,double max)
            if (label != 0)
            {
                //doing something for orderHistory
-               label->setText(QString::number(max - (cc+1)*interval,10,2));
+               int prec = 2;
+               if(max>100 || min < -100) prec=0;
+               label->setText(QString::number(max - (cc+1)*interval,10,prec));
            }
        }
+}
+
+
+void CurveView::getData(QList<double> &data)
+{
+    data.clear();
+    for(int i=0;i<1000;i++)
+    {
+        data.push_back(pointsY[i]);
+    }
+}
+
+void CurveView::applyData(const QList<double> &data)
+{
+    pointsYmax = -1e10;
+    pointsYmin = 1e10;
+    for(int i=0;i<1000;i++)
+    {
+        pointsY[i] = data[i] ;
+        pointsYmax = qMax(pointsYmax,pointsY[i]);
+        pointsYmin = qMin(pointsYmin,pointsY[i]);
+    }
+    draw();
 }

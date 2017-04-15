@@ -47,7 +47,7 @@ ConfigDialog::ConfigDialog()
     : m_pModbusCtx(NULL)
     , contentsWidget(NULL)
     , pagesWidget(NULL)
-    , groupBox(NULL)
+    , m_cboSetGroups(NULL)
     , statusBar(NULL)
     , statusLabel(NULL)
     , serialBox(NULL)
@@ -146,6 +146,8 @@ void ConfigDialog::Initialize()
     mainLayout->addLayout(buttonsLayout);
     setLayout(mainLayout);
 
+    readParamList();
+    updatePages();
 
     serialRadio->click();
 
@@ -295,6 +297,7 @@ void ConfigDialog::on_uploadButton_clicked()
                 QString text;
                 text += QStringLiteral("地址[%1H],长度[%2H]" ).arg(QString::number(addr[i]+j,16),4,QChar('0')).arg(QString::number(1024-j,16),4,QChar('0') );
                 QMessageBox::information(NULL,QStringLiteral("下载信息"),text);
+                continue;
                 return ;
             }
         }
@@ -383,5 +386,48 @@ ConfigDialog * ConfigDialog::getInstance()
         pInstance = new ConfigDialog;
     }
     return pInstance;
+
+}
+
+
+bool ConfigDialog::readParamList()
+{
+
+    QFile file("file.dat");
+    file.open(QIODevice::ReadOnly);
+    QDataStream in(&file);    // read the data serialized from the file
+    in >> umweldingParamList;           // extract "the answer is" and 42
+}
+
+
+bool ConfigDialog::writeParamList()
+{
+    QFile file("file.dat");
+    file.open(QIODevice::WriteOnly);
+    QDataStream out(&file);   // we will serialize the data into the file
+    out << umweldingParamList;
+}
+
+
+bool ConfigDialog::addGroup(const QString &name, const QList<quint32> &value, const QList<double> &data)
+{
+    UmweldingParams param;
+    param.name = name;
+    param.value = value;
+    param.data  = data;
+    umweldingParamList.push_back(param);
+    return true;
+}
+
+
+void ConfigDialog::updatePages()
+{
+    ConfigDialog::getInstance()->m_cboSetGroups->clear();
+    ConfigDialog::getInstance()->m_cboGroupGroups->clear();
+    for(QList<UmweldingParams>::iterator iter=umweldingParamList.begin();iter != umweldingParamList.end();++iter)
+    {
+        ConfigDialog::getInstance()->m_cboSetGroups->addItem(iter->name);
+        ConfigDialog::getInstance()->m_cboGroupGroups->addItem(iter->name);
+    }
 
 }
