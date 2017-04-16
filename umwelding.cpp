@@ -246,6 +246,18 @@ void ConfigDialog::on_downloadButton_clicked()
     {
         statusLabel->setStyleSheet(" QLabel{ color: red }");
         statusLabel->setText(QStringLiteral("下载失败"));
+        if(var_data.isValid())
+        {
+            btn->setStyleSheet("background-color:rgba(255,0,0,255)");
+        }
+        else if(var_lineedit.isValid())
+        {
+            var_lineedit.value<QLineEdit*>()->setStyleSheet("background-color:rgba(255,0,0,255)");
+        }
+//        else if(var_combobox.isValid())
+//        {
+//            var_combobox.value<QLineEdit*>()->setStyleSheet("background-color:rgba(255,0,0,255)");
+//        }
     }
     statusTimer->start( 3000 ); // 2秒单触发定时器
 
