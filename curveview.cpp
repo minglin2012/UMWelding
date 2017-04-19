@@ -36,10 +36,13 @@ CurveView::CurveView(QWidget *parent) :
 //    }
 
     // a white semi-transparent foreground
-    m_pScene->setBackgroundBrush(QColor(0, 255, 0, 130));
+//    m_pScene->setBackgroundBrush(QColor(0, 255, 0, 130));
 
     // a grid foreground
-    m_pScene->setForegroundBrush(QBrush(Qt::lightGray, Qt::CrossPattern));
+    //m_pScene->setBackgroundBrush(QBrush(Qt::yellow, Qt::CrossPattern));
+
+    m_pScene->setForegroundBrush(QColor(255,255,255,100));
+    m_pScene->setBackgroundBrush(Qt::green);
     setScene(m_pScene);
 
     axisHLayout = new QHBoxLayout;
@@ -317,14 +320,21 @@ void CurveView::draw()
     QPainterPath path;
     path.moveTo(0,HEIGHT-(pointsY[0]*yFactor));
     m_pScene->clear();
-    for(int i=1;i<1000;i+=1)
+    for(int i=0;i<1000;i+=1)
     {
 //        qDebug()<<"line To :"<<i<<":"<<i*xFactor<<","<<HEIGHT-(pointsY[i]*yFactor)<<endl;
         path.lineTo(int(i*xFactor),int(HEIGHT-(pointsY[i]*yFactor)));
         if(i%100 == 0)
         {
             myEllipseItem *item = new myEllipseItem(QPointF(i*xFactor,HEIGHT-(pointsY[i]*yFactor)));
-            item->setData(0,QVariant::fromValue((void*)&pointsY[i]));
+            item->setData(0,QVariant::fromValue((void*)&pointsY[i]));//要修改的Y指针
+            item->setData(1,QVariant::fromValue( xFactor));// xFactor
+            item->setData(2,QVariant::fromValue( yFactor));// yFactor
+            qDebug()<<"HEIGHT="<<HEIGHT;
+            item->setData(3,QVariant::fromValue( HEIGHT));//  HEIGHT
+            item->setData(4,QVariant::fromValue( rr.y()));//  rr.y()
+            item->setData(5,QVariant::fromValue( pointsYmax));//  pointsYmin
+
             m_pScene->addItem(item);
 //            m_pScene->addItem(i*xFactor,HEIGHT-(pointsY[i]*yFactor),10,10);
         }
@@ -397,7 +407,7 @@ void CurveView::reSimulate()
     {
         pointList.append(QPointF(i,pointsY[i]));
     }
-    generateY(CurveView::GEN_LAGRANGE_INTER,pointList,1);
+    generateY(CurveView::GEN_LAGRANGE_INTER,pointList,7);
     draw();
 }
 

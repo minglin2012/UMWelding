@@ -127,6 +127,7 @@ GroupPage::GroupPage(bool bEnable, QWidget *parent)
 
     btnLoadGroup->setProperty("combobox",QVariant::fromValue(comboGroup));
     btnSaveGroup->setProperty("combobox",QVariant::fromValue(comboGroup));
+    btnDeleteGroup->setProperty("combobox",QVariant::fromValue(comboGroup));
 
     hLayout->addWidget(btnDownloadGroup);
     connect(btnDownloadGroup,&QPushButton::clicked,ConfigDialog::getInstance(),&ConfigDialog::on_downloadGroupButton_clicked);
@@ -284,6 +285,7 @@ void GroupPage::on_loadButton_clicked()
     QVariant var_cbo = pBtn->property("combobox" );
     Q_ASSERT(var_cbo.isValid()) ;
     int index = var_cbo.value<QComboBox*>()->currentIndex();
+    if(index == -1) return ;
 
     const UmweldingParams &param = ConfigDialog::getInstance()->umweldingParamList.at(index);
     qDebug()<<"read group:"<<index<<endl;
@@ -315,7 +317,14 @@ void GroupPage::on_loadButton_clicked()
 
 void GroupPage::on_deleteButton_clicked()
 {
-
+    QMessageBox::information(NULL,tr("info"),tr("load group"));
+    QPushButton *pBtn = (QPushButton*)sender();
+    QVariant var_cbo = pBtn->property("combobox" );
+    Q_ASSERT(var_cbo.isValid()) ;
+    int index = var_cbo.value<QComboBox*>()->currentIndex();
+    if(index == -1) return ;
+    ConfigDialog::getInstance()->umweldingParamList.removeAt(index);
+    ConfigDialog::getInstance()->updatePages();
 }
 
 void GroupPage::on_curveButton_clicked()
