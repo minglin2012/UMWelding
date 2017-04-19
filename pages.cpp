@@ -229,7 +229,7 @@ void GroupPage::addItem(QGridLayout *layout, const int * pointsY, int row, int c
     CurveView *curveView = new CurveView;
     m_curveView = curveView;
     QPointF points[] = {QPointF(0,100),QPointF(100,200),QPointF(200,0),QPointF(300,80),QPointF(500,100),QPointF(600,50),QPointF(700,100),QPointF(800,0),QPointF(999,50)};
-//    curveView-> generateY(CurveView::GEN_LAGRANGE_INTER,points,9,6);
+    curveView-> generateY(CurveView::GEN_LAGRANGE_INTER,points,9,6);
     layout->addLayout(curveView->getLayout(),row,column,rowSpan,columnSpan);
 }
 

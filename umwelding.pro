@@ -3,12 +3,14 @@ QT += widgets
 HEADERS     = umwelding.h \
               pages.h \
     curveview.h \
-    umweldingparams.h
+    umweldingparams.h \
+    myellipseitem.h
 SOURCES     = umwelding.cpp \
               main.cpp \
               pages.cpp \
     curveview.cpp \
-    umweldingparams.cpp
+    umweldingparams.cpp \
+    myellipseitem.cpp
 RESOURCES   += umwelding.qrc
 
 # install

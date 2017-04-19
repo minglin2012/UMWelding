@@ -4,6 +4,9 @@
 #include <QDebug>
 #include <QTime>
 #include <QLabel>
+#include <QPushButton>
+
+#include "myellipseitem.h"
 __int64_t factorial(int  x )
 {
     return x ? ( factorial(x-1)*x) : 1;
@@ -59,7 +62,9 @@ CurveView::CurveView(QWidget *parent) :
         axisVLayout->addWidget(label,0,Qt::AlignBottom);
     }
     viewLayout->addLayout(axisVLayout,0,0,1,1);
-    viewLayout->addWidget(new QLabel(""),1,0,1,1);
+    QPushButton *pBtn = new QPushButton(tr("R"));
+    viewLayout->addWidget(pBtn,1,0,1,1);
+    connect(pBtn,&QPushButton::clicked,this,&CurveView::on_runButton_clicked);
     viewLayout->addWidget(this,0,1,1,1);
     viewLayout->addLayout(axisHLayout,1,1,1,1);
 
@@ -296,17 +301,6 @@ void CurveView::readArray(const unsigned short *addr,int len)
 
 void CurveView::draw()
 {
-    //qDebug()<<"factorial(5)="<<factorial(100);
-    //    QPoint points[] = {QPoint(0,100),QPoint(100,200),QPoint(200,0),QPoint(300,80),QPoint(500,100),QPoint(600,50),QPoint(700,100),QPoint(800,0),QPoint(999,50)};
-    //    QPoint points[] = {QPoint(1,50) };
-    //    generateY(GEN_LAGRANGE_INTER,points,9,8);
-    //    QPainterPath curvePath;
-//        curvePath.moveTo(0,HEIGHT-(pointsY[0]*yFactor));
-//    for(int i=1;i<1000;i+=1)
-//    {
-//          cout<<"line To :"<<i<<":"<<i*xFactor<<","<<HEIGHT-(pointsY[i]*yFactor)<<endl;
-//        curvePath.lineTo(int(i*xFactor),int(HEIGHT-(pointsY[i]*yFactor)));
-//    }
     qDebug()<<"DRAW["<<this<<"]";
     int WIDTH=200;
     int HEIGHT=200;
@@ -314,18 +308,27 @@ void CurveView::draw()
     HEIGHT=rect().height();
     double xFactor = WIDTH/1000.0 ;
     double yFactor = HEIGHT/(pointsYmax-pointsYmin);
+    qDebug()<<"xFactor"<<xFactor<<",yFactor"<<yFactor;
 
     QRect rr = rect();
     rr.moveTop(HEIGHT-pointsYmax*yFactor);
+    qDebug()<<"setSceneRect="<<rr<<",min:"<<pointsYmin<<",max:"<<pointsYmax;
     setSceneRect(rr);
     QPainterPath path;
     path.moveTo(0,HEIGHT-(pointsY[0]*yFactor));
+    m_pScene->clear();
     for(int i=1;i<1000;i+=1)
     {
-        //qDebug()<<"line To :"<<i<<":"<<i*xFactor<<","<<HEIGHT-(pointsY[i]*yFactor)<<endl;
+//        qDebug()<<"line To :"<<i<<":"<<i*xFactor<<","<<HEIGHT-(pointsY[i]*yFactor)<<endl;
         path.lineTo(int(i*xFactor),int(HEIGHT-(pointsY[i]*yFactor)));
+        if(i%100 == 0)
+        {
+            myEllipseItem *item = new myEllipseItem(QPointF(i*xFactor,HEIGHT-(pointsY[i]*yFactor)));
+            item->setData(0,QVariant::fromValue((void*)&pointsY[i]));
+            m_pScene->addItem(item);
+//            m_pScene->addItem(i*xFactor,HEIGHT-(pointsY[i]*yFactor),10,10);
+        }
     }
-    m_pScene->clear();
     m_pScene->addPath(path);
     updateAxisVLayout(pointsYmin,pointsYmax);
 }
@@ -377,4 +380,28 @@ void CurveView::applyData(const QList<double> &data)
         pointsYmin = qMin(pointsYmin,pointsY[i]);
     }
     draw();
+}
+
+
+void CurveView::on_runButton_clicked()
+{
+    qDebug()<<"on_runButton_clicked()";
+    reSimulate();
+}
+
+
+void CurveView::reSimulate()
+{
+    QList<QPointF> pointList;
+    for(int i=0;i<1000;i+=100)
+    {
+        pointList.append(QPointF(i,pointsY[i]));
+    }
+    generateY(CurveView::GEN_LAGRANGE_INTER,pointList,1);
+    draw();
+}
+
+void CurveView::on_myEllipse_ychanged()
+{
+    qDebug()<<"on_myEllipse_ychanged()";
 }

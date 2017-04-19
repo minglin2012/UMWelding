@@ -61,7 +61,7 @@ void ConfigDialog::Initialize()
 {
 
 //     setWindowFlags(Qt::FramelessWindowHint);
-    setWindowState(Qt::WindowMaximized);
+//    setWindowState(Qt::WindowMaximized);
     setObjectName("umwelding");
      setStyleSheet("#umwelding{border-image:url(:/images/frame.png);}");
 

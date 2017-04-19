@@ -37,6 +37,7 @@ public:
 
     void getData(QList<double> &data);
     void applyData(const QList<double> &data);
+    void reSimulate();
 
     void draw();
     void resizeEvent(QResizeEvent *event);
@@ -45,6 +46,8 @@ public:
 signals:
 
 public slots:
+    void on_runButton_clicked();
+    void on_myEllipse_ychanged();
 private:
     QGraphicsScene *m_pScene;
     QPainterPath m_path;
